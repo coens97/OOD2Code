@@ -25,9 +25,10 @@ namespace FlowSystem.Business
             };
         }
 
-        private bool PositionFree(PointEntity point)
+        private bool PositionFree(PointEntity point, IComponent exclude = null)
         {
             return !FlowNetwork.Components.Any(x =>
+                x != exclude &&
                 x.Position.X <= point.X &&
                 x.Position.X + ComponentWidth > point.X &&
                 x.Position.Y <= point.Y &&
@@ -142,8 +143,9 @@ namespace FlowSystem.Business
         {
             FlowNetwork.Pipes.Remove(pipe);
         }
-#endregion
+        #endregion
 
+#region Please hide me
         public void DuplicateComponent(IComponent component, PointEntity point)
         {
             /// PLEASE IGNORE THIS PIECE OF CODE, duplicating component was a stupid idea, even some crappy utility class is added.
@@ -172,6 +174,7 @@ namespace FlowSystem.Business
             c.Position = point;
             FlowNetwork.Components.Add(c);
         }
+#endregion
 
         public bool FileAlreadyExist(string path)
         {
@@ -180,7 +183,10 @@ namespace FlowSystem.Business
 
         public void MoveComponent(IComponent component, PointEntity point)
         {
-            throw new System.NotImplementedException();
+            if (!PositionFree(point, component))
+                throw new Exception("Can't overlap components.");
+
+            component.Position = point;
         }
 
         public void OpenFile(string path)

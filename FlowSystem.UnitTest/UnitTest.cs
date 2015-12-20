@@ -185,5 +185,24 @@ namespace FlowSystem.UnitTest
             Assert.AreEqual(_flowModel.FlowNetwork.Components.Count(c => c.Position.Y == y1), 1);
             Assert.AreEqual(_flowModel.FlowNetwork.Components.Count(c => c.Position.Y == y2), 1);
         }
+
+        [TestMethod]
+        public void TestMoveToSameSpot()
+        {
+            TestAddPump();
+            var pump = _flowModel.FlowNetwork.Components.First();
+            _flowModel.MoveComponent(pump, pump.Position);
+        }
+
+        [TestMethod]
+        public void TestMoveComponent()
+        {
+            TestAddPump();
+            var pump = _flowModel.FlowNetwork.Components.First();
+            _flowModel.MoveComponent(pump, new PointEntity {X = 999, Y = 666});
+
+            Assert.AreEqual(pump.Position.X, 999);
+            Assert.AreEqual(pump.Position.Y, 666);
+        }
     }
 }
