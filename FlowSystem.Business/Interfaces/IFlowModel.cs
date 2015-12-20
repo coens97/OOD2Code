@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FlowSystem.Common;
+using FlowSystem.Common.Components;
 using FlowSystem.Common.Interfaces;
 
 namespace FlowSystem.Business.Interfaces
@@ -14,6 +15,7 @@ namespace FlowSystem.Business.Interfaces
         void AddSplitter(PointEntity point);
         void ComponentPropertyChanged(IComponent component);
         void DeleteComponent(IComponent component);
+        void DeletePipe(PipeEntity pipe);
         void DuplicateComponent(IComponent component, PointEntity point);
         bool FileAlreadyExist(string path);
         void MoveComponent(IComponent component, PointEntity point);

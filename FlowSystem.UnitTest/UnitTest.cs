@@ -71,7 +71,7 @@ namespace FlowSystem.UnitTest
         public void TestAddSplitter()
         {
             var x = 100;
-            var y = 200;
+            var y = 600;
             _flowModel.AddSplitter(new PointEntity { X = x, Y = y });
 
             var entity = _flowModel.FlowNetwork.Components.OfType<SplitterEntity>().First();
@@ -97,6 +97,8 @@ namespace FlowSystem.UnitTest
 
             Assert.AreEqual(pipe.StartComponentIndex, 0);
             Assert.AreEqual(pipe.EndComponentIndex, 1);
+            Assert.IsInstanceOfType(pipe.StartComponent, typeof(PumpEntity));
+            Assert.IsInstanceOfType(pipe.EndComponent, typeof(MergerEntity));
         }
 
         [TestMethod]
@@ -129,6 +131,39 @@ namespace FlowSystem.UnitTest
         {
             TestAddPump();
             TestAddPump();
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception), "Can't connect two pipes to an input or output")]
+        public void TestPipeFailConnectToUsedOutput()
+        {
+            TestAddPipe();
+            var pump = _flowModel.FlowNetwork.Components.OfType<PumpEntity>().First();
+            var merger = _flowModel.FlowNetwork.Components.OfType<MergerEntity>().First();
+            _flowModel.AddPipe(pump, merger, new List<PointEntity>(), 0, 0);
+        }
+
+        /// <summary>
+        /// Important for this test is to make sure that the pipes connected to the component are also removed
+        /// </summary>
+        [TestMethod]
+        public void TestDeleteComponentWithPipes()
+        {
+            TestAddPipe();
+
+            Assert.AreEqual(_flowModel.FlowNetwork.Pipes.Count, 1);
+
+            TestAddSplitter();
+            var splitter = _flowModel.FlowNetwork.Components.OfType<SplitterEntity>().First();
+            var merger = _flowModel.FlowNetwork.Components.OfType<MergerEntity>().First();
+            _flowModel.AddPipe(splitter, merger, new List<PointEntity>(), 0, 0);
+
+            Assert.AreEqual(_flowModel.FlowNetwork.Pipes.Count, 2);
+
+            _flowModel.DeleteComponent(splitter);
+
+            Assert.AreEqual(_flowModel.FlowNetwork.Pipes.Count, 1);
+            Assert.IsFalse(_flowModel.FlowNetwork.Components.Contains(splitter));
         }
     }
 }

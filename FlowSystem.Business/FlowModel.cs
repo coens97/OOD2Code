@@ -10,8 +10,8 @@ namespace FlowSystem.Business
 {
     public class FlowModel : IFlowModel
     {
-        private const int _componentWidth = 64;
-        private const int _componentHeight = 64;
+        private const int ComponentWidth = 64;
+        private const int ComponentHeight = 64;
 
         public FlowNetworkEntity FlowNetwork { get; set; }
 
@@ -28,9 +28,9 @@ namespace FlowSystem.Business
         {
             return !FlowNetwork.Components.Any(x =>
                 x.Position.X <= point.X &&
-                x.Position.X + _componentWidth > point.X &&
+                x.Position.X + ComponentWidth > point.X &&
                 x.Position.Y <= point.Y &&
-                x.Position.Y + _componentHeight > point.Y
+                x.Position.Y + ComponentHeight > point.Y
                 );
         }
 
@@ -58,15 +58,21 @@ namespace FlowSystem.Business
                 || endIndex < 0 || endIndex >= end.FlowInput.Length)
                 throw new ArgumentException("Unable to connect pipe to component, index is out of range");
 
+            // Check if the input or output is already used
+            if (FlowNetwork.Pipes.Any(x =>
+                (x.StartComponent == start && x.StartComponentIndex == startIndex) ||
+                (x.EndComponent == end && x.EndComponentIndex == endIndex)))
+                throw new Exception("Can't connect a pipe to the same component twice.");
+
             FlowNetwork.Pipes.Add(
                 new PipeEntity
                 { 
                     CurrentFlow = 0,
-                    EndComponent = start,
+                    EndComponent = end,
                     EndComponentIndex = endIndex,
                     MaximumFlow = 0,
                     Path = path,
-                    StartComponent = end,
+                    StartComponent = start,
                     StartComponentIndex = startIndex
                 });
         }
@@ -116,11 +122,26 @@ namespace FlowSystem.Business
         {
             throw new System.NotImplementedException();
         }
-
+#region Delete
         public void DeleteComponent(IComponent component)
         {
-            throw new System.NotImplementedException();
+            // get all pipes connected to component
+            var pipes = FlowNetwork.Pipes.Where(x =>
+                x.StartComponent == component ||
+                x.EndComponent == component);
+            
+            // delete those pipes
+            pipes.ToList().ForEach(x =>
+                FlowNetwork.Pipes.Remove(x));
+
+            FlowNetwork.Components.Remove(component);
         }
+
+        public void DeletePipe(PipeEntity pipe)
+        {
+            FlowNetwork.Pipes.Remove(pipe);
+        }
+#endregion
 
         public void DuplicateComponent(IComponent component, PointEntity point)
         {

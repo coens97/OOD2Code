@@ -7,8 +7,8 @@ namespace FlowSystem.Common.Components
     {
         public double MaximumFlow { get; set; }
         public double CurrentFlow { get; set; }
-        public IFlowInput StartComponent { get; set; }
-        public IFlowOutput EndComponent { get; set; }
+        public IFlowOutput StartComponent { get; set; }
+        public IFlowInput EndComponent { get; set; }
         public int StartComponentIndex { get; set; }
         public int EndComponentIndex { get; set; }
         public IList<PointEntity> Path { get; set; } 
