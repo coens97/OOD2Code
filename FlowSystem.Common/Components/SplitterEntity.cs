@@ -1,7 +1,9 @@
-﻿using FlowSystem.Common.Interfaces;
+﻿using System;
+using FlowSystem.Common.Interfaces;
 
 namespace FlowSystem.Common.Components
 {
+    [Serializable]
     public class SplitterEntity : IComponent, IFlowInput, IFlowOutput
     {
         public int Distrubution { get; set; }

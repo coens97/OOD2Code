@@ -165,5 +165,25 @@ namespace FlowSystem.UnitTest
             Assert.AreEqual(_flowModel.FlowNetwork.Pipes.Count, 1);
             Assert.IsFalse(_flowModel.FlowNetwork.Components.Contains(splitter));
         }
+
+        /// <summary>
+        /// Important for this test is to make sure that the pipes connected to the component are also removed
+        /// </summary>
+        [TestMethod]
+        public void TestDuplicate()
+        {
+            var x = 100;
+            var y1 = 100;
+            var y2 = 500;
+
+            _flowModel.AddPump(new PointEntity {X = x, Y = y1});
+
+            var pump = _flowModel.FlowNetwork.Components.First();
+
+            _flowModel.DuplicateComponent(pump, new PointEntity {X = x, Y= y2});
+
+            Assert.AreEqual(_flowModel.FlowNetwork.Components.Count(c => c.Position.Y == y1), 1);
+            Assert.AreEqual(_flowModel.FlowNetwork.Components.Count(c => c.Position.Y == y2), 1);
+        }
     }
 }

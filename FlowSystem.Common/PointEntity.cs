@@ -1,5 +1,8 @@
-﻿namespace FlowSystem.Common
+﻿using System;
+
+namespace FlowSystem.Common
 {
+    [Serializable]
     public class PointEntity
     {
         public int X { get; set; }

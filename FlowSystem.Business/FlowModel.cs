@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FlowSystem.Business.Interfaces;
+using FlowSystem.Business.Utility;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
 using FlowSystem.Common.Interfaces;
@@ -145,7 +146,31 @@ namespace FlowSystem.Business
 
         public void DuplicateComponent(IComponent component, PointEntity point)
         {
-            throw new System.NotImplementedException();
+            /// PLEASE IGNORE THIS PIECE OF CODE, duplicating component was a stupid idea, even some crappy utility class is added.
+            /// This code is a good example of shitty unmaintainable code which is prone to unexpected bugs
+            if (!PositionFree(point))
+                throw new Exception("Position where component is place is not free.");
+
+            IComponent c;
+            switch (component.GetType().ToString())
+            {
+                case "FlowSystem.Common.Components.MergerEntity":
+                    c = ObjectCopier.Clone(component as MergerEntity);
+                    break;
+                case "FlowSystem.Common.Components.PumpEntity":
+                    c = ObjectCopier.Clone(component as PumpEntity);
+                    break;
+                case "FlowSystem.Common.Components.SinkEntity":
+                    c = ObjectCopier.Clone(component as SinkEntity);
+                    break;
+                case "FlowSystem.Common.Components.SplitterEntity":
+                    c = ObjectCopier.Clone(component as SplitterEntity);
+                    break;
+                default:
+                    throw new Exception("Error happened, the developer forgot to implement something...sorry :(");
+            }
+            c.Position = point;
+            FlowNetwork.Components.Add(c);
         }
 
         public bool FileAlreadyExist(string path)

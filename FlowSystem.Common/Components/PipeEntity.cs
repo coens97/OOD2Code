@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FlowSystem.Common.Interfaces;
 
 namespace FlowSystem.Common.Components
 {
+    [Serializable]
     public class PipeEntity
     {
         public double MaximumFlow { get; set; }

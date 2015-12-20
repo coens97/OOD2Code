@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FlowSystem.Common.Components;
 using FlowSystem.Common.Interfaces;
 
 namespace FlowSystem.Common
 {
+    [Serializable]
     public class FlowNetworkEntity
     {
         public IList<IComponent> Components { get; set; }
