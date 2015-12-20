@@ -11,16 +11,8 @@ namespace FlowSystem.Business
 {
     public class FlowCalculator : IFlowCalculator
     {
-        public void UpdateAll(FlowNetworkEntity flowNetwork)
+        private static void ProcessPipequeue(FlowNetworkEntity flowNetwork, Queue<PipeEntity> pipeQueue)
         {
-            // Get all the pumps and set the flowOutput right
-            var pumps = flowNetwork.Components.OfType<PumpEntity>().ToList();
-            pumps.ForEach(x => x.FlowOutput[0] = x.CurrentFlow);
-
-            // Create a queue of pipes connected to the pumps to it
-            var pipeQueue = new Queue<PipeEntity>();
-            pipeQueue.EnqueueRange(flowNetwork.Pipes.Where(x => pumps.Contains(x.StartComponent)));
-
             var pipe = pipeQueue.Dequeue();
             while (pipe != null)
             {
@@ -34,11 +26,24 @@ namespace FlowSystem.Business
                 pipe = pipeQueue.Any() ? pipeQueue.Dequeue() : null;
             }
         }
+        public void UpdateAll(FlowNetworkEntity flowNetwork)
+        {
+            // Get all the pumps and set the flowOutput right
+            var pumps = flowNetwork.Components.OfType<PumpEntity>().ToList();
+            pumps.ForEach(ProcessComponent);
 
-        private void ProcessComponent(IComponent component)
+            // Create a queue of pipes connected to the pumps to it
+            var pipeQueue = new Queue<PipeEntity>();
+            pipeQueue.EnqueueRange(flowNetwork.Pipes.Where(x => pumps.Contains(x.StartComponent)));
+
+            ProcessPipequeue(flowNetwork, pipeQueue);
+        }
+
+        private static void ProcessComponent(IComponent component)
         {
             var merger = component as MergerEntity;
             var splitter = component as SplitterEntity;
+            var pump = component as PumpEntity;
 
             if (merger != null)
             {
@@ -49,14 +54,20 @@ namespace FlowSystem.Business
                 splitter.FlowOutput[0] = splitter.FlowInput[0]*(splitter.Distrubution/100.0);
                 splitter.FlowOutput[1] = splitter.FlowInput[0]*((100 - splitter.Distrubution)/100.0);
             }
+            else if (pump != null)
+            {
+                pump.FlowOutput[0] = pump.CurrentFlow;
+            }
         }
 
         public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponent component)
         {
-            throw new System.NotImplementedException();
-        }
+            ProcessComponent(component);
 
-        
+            var pipeQueue = new Queue<PipeEntity>();
+            pipeQueue.EnqueueRange(flowNetwork.Pipes.Where(x => x.StartComponent == component));
+            ProcessPipequeue(flowNetwork, pipeQueue);
+        }
     }
 
 }

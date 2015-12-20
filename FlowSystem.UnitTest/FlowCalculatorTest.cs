@@ -62,5 +62,18 @@ namespace FlowSystem.UnitTest
             Assert.AreEqual(_sink1.FlowInput[0], 7.0);
             Assert.AreEqual(_sink2.FlowInput[0], 3.0);
         }
+
+        [TestMethod]
+        public void TestCalculationFromComponent()
+        {
+            _flowCalculator.UpdateAll(_flowNetwork);
+
+            _pump2.CurrentFlow = 16;
+
+            _flowCalculator.UpdateFrom(_flowNetwork,_pump2);
+
+            Assert.AreEqual(_sink1.FlowInput[0], 14.0);
+            Assert.AreEqual(_sink2.FlowInput[0], 6.0);
+        }
     }
 }
