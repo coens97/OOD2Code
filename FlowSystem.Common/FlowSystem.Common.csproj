@@ -40,6 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\MergerEntity.cs" />
+    <Compile Include="Components\PipeEntity.cs" />
+    <Compile Include="Components\PumpEntity.cs" />
+    <Compile Include="Components\SinkEntity.cs" />
+    <Compile Include="Components\SplitterEntity.cs" />
+    <Compile Include="FlowNetworkEntity.cs" />
+    <Compile Include="Interfaces\IComponent.cs" />
+    <Compile Include="Interfaces\IFlowInput.cs" />
+    <Compile Include="Interfaces\IFlowOutput.cs" />
+    <Compile Include="PointEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
