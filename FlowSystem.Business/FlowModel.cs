@@ -15,9 +15,12 @@ namespace FlowSystem.Business
         private const int ComponentHeight = 64;
 
         public FlowNetworkEntity FlowNetwork { get; set; }
+        private readonly IFlowCalculator _flowCalculator;
 
-        public FlowModel()
+        public FlowModel(IFlowCalculator flowCalculator)
         {
+            _flowCalculator = flowCalculator;
+
             FlowNetwork = new FlowNetworkEntity
             {
                 Components = new List<IComponent>(),
@@ -77,6 +80,8 @@ namespace FlowSystem.Business
                     StartComponent = start,
                     StartComponentIndex = startIndex
                 });
+
+            _flowCalculator.UpdateFrom(FlowNetwork, start);
         }
 
         public void AddPump(PointEntity point)

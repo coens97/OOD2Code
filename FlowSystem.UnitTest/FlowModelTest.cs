@@ -21,6 +21,7 @@ namespace FlowSystem.UnitTest
         {
             _container = new StandardKernel();
             _container.Bind<IFlowModel>().To<FlowModel>().InTransientScope();
+            _container.Bind<IFlowCalculator>().To<FlowCalculator>().InSingletonScope();
             _flowModel = _container.Get<IFlowModel>();
         }
 
