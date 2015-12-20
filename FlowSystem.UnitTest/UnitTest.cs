@@ -27,8 +27,8 @@ namespace FlowSystem.UnitTest
         [TestMethod]
         public void TestAddMerger()
         {
-            var x = 100;
-            var y = 200;
+            var x = 300;
+            var y = 400;
             _flowModel.AddMerger(new PointEntity {X = x, Y = y});
 
             var entity = _flowModel.FlowNetwork.Components.OfType<MergerEntity>().First();
@@ -114,12 +114,21 @@ namespace FlowSystem.UnitTest
             Assert.AreEqual(_flowModel.FlowNetwork.Pipes.Count, 0);
         }
 
-        [TestMethod] [ExpectedException(typeof (ArgumentException), "Pipe can't connect to output which is not there")]
+        [TestMethod]
+        [ExpectedException(typeof (ArgumentException), "Pipe can't connect to output which is not there")]
         public void TestAddPipeFailNull()
         {
             _flowModel.AddPipe(null, null, new List<PointEntity>(), 0, 0);
 
             Assert.AreEqual(_flowModel.FlowNetwork.Pipes.Count, 0);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception), "Can't place two components on the same spot")]
+        public void TestOverlappingComponents()
+        {
+            TestAddPump();
+            TestAddPump();
         }
     }
 }

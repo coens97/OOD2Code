@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FlowSystem.Business.Interfaces;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
@@ -9,6 +10,9 @@ namespace FlowSystem.Business
 {
     public class FlowModel : IFlowModel
     {
+        private const int _componentWidth = 64;
+        private const int _componentHeight = 64;
+
         public FlowNetworkEntity FlowNetwork { get; set; }
 
         public FlowModel()
@@ -20,8 +24,22 @@ namespace FlowSystem.Business
             };
         }
 
+        private bool PositionFree(PointEntity point)
+        {
+            return !FlowNetwork.Components.Any(x =>
+                x.Position.X <= point.X &&
+                x.Position.X + _componentWidth > point.X &&
+                x.Position.Y <= point.Y &&
+                x.Position.Y + _componentHeight > point.Y
+                );
+        }
+
+#region Add
         public void AddMerger(PointEntity point)
         {
+            if (!PositionFree(point))
+                throw new Exception("Position where component is place is not free.");
+
             FlowNetwork.Components.Add(
                 new MergerEntity
                 {
@@ -55,6 +73,9 @@ namespace FlowSystem.Business
 
         public void AddPump(PointEntity point)
         {
+            if (!PositionFree(point))
+                throw new Exception("Position where component is place is not free.");
+
             FlowNetwork.Components.Add(
                 new PumpEntity
                 {
@@ -65,6 +86,9 @@ namespace FlowSystem.Business
 
         public void AddSink(PointEntity point)
         {
+            if (!PositionFree(point))
+                throw new Exception("Position where component is place is not free.");
+
             FlowNetwork.Components.Add(
                 new SinkEntity
                 {
@@ -75,6 +99,9 @@ namespace FlowSystem.Business
 
         public void AddSplitter(PointEntity point)
         {
+            if (!PositionFree(point))
+                throw new Exception("Position where component is place is not free.");
+
             FlowNetwork.Components.Add(
                 new SplitterEntity
                 {
@@ -83,6 +110,7 @@ namespace FlowSystem.Business
                     Position = point
                 });
         }
+#endregion
 
         public void ComponentPropertyChanged(IComponent component)
         {
