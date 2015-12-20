@@ -11,7 +11,7 @@ using Ninject;
 namespace FlowSystem.UnitTest
 {
     [TestClass]
-    public class UnitTest
+    public class FlowModelTest
     {
         private IKernel _container;
         private IFlowModel _flowModel;

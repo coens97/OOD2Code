@@ -115,6 +115,7 @@ namespace FlowSystem.Business
                 {
                     FlowInput = new double[1],
                     FlowOutput = new double[2],
+                    Distrubution = 50,
                     Position = point
                 });
         }
