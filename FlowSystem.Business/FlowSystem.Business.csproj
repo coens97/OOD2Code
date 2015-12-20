@@ -40,7 +40,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlowModel.cs" />
+    <Compile Include="Interfaces\IFlowModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlowSystem.Common\FlowSystem.Common.csproj">
+      <Project>{e250e4de-741d-41a0-a7a9-fa3730282b57}</Project>
+      <Name>FlowSystem.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FlowSystem.Data\FlowSystem.Data.csproj">
+      <Project>{2d729e92-872a-4023-8400-9f4b21661bee}</Project>
+      <Name>FlowSystem.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

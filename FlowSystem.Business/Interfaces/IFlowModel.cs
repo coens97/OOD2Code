@@ -8,7 +8,7 @@ namespace FlowSystem.Business.Interfaces
     {
         FlowNetworkEntity FlowNetwork { get; set; }
         void AddMerger(PointEntity point);
-        void AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path);
+        void AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path, int startIndex, int endIndex);
         void AddPump(PointEntity point);
         void AddSink(PointEntity point);
         void AddSplitter(PointEntity point);

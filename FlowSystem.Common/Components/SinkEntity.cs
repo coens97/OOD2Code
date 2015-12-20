@@ -2,10 +2,9 @@
 
 namespace FlowSystem.Common.Components
 {
-    public class SinkEntity : IComponent, IFlowOutput, IFlowInput
+    public class SinkEntity : IComponent, IFlowInput
     {
         public PointEntity Position { get; set; }
-        public double[] FlowOutput { get; set; }
         public double[] FlowInput { get; set; }
     }
 }
