@@ -55,6 +55,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FlowCalculatorTest.cs" />
+    <Compile Include="FlowDataTest.cs" />
     <Compile Include="FlowModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -66,6 +67,10 @@
     <ProjectReference Include="..\FlowSystem.Common\FlowSystem.Common.csproj">
       <Project>{e250e4de-741d-41a0-a7a9-fa3730282b57}</Project>
       <Name>FlowSystem.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FlowSystem.Data\FlowSystem.Data.csproj">
+      <Project>{2d729e92-872a-4023-8400-9f4b21661bee}</Project>
+      <Name>FlowSystem.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
