@@ -187,7 +187,7 @@ namespace FlowSystem.Business
 
         public bool FileAlreadyExist(string path)
         {
-            throw new System.NotImplementedException();
+            return _dataAccesLayer.FileAlreadyExist(path);
         }
 
         public void MoveComponent(IComponent component, PointEntity point)

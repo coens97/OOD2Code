@@ -11,7 +11,7 @@
         <Grid HorizontalAlignment="Left" Margin="10,10,0,10" Width="132">
             <GroupBox x:Name="groupBox" Header="File" VerticalAlignment="Top" Height="60">
                 <Grid>
-                    <Button x:Name="BtnOpenFile" fa:Awesome.Content="FolderOpen" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Left" Width="36" Click="BtnOpenFile_Click"/>
+                    <Button x:Name="BtnOpenFile" fa:Awesome.Content="FolderOpen" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Left" Width="36" Click="BtnOpenFile_Click" Height="38" VerticalAlignment="Top"/>
                     <Button x:Name="BtnSave" fa:Awesome.Content="FileOutlined" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Left" Width="36" Margin="41,0,0,0" Click="BtnSave_Click"/>
                     <Button x:Name="BtnSaveAs" fa:Awesome.Content="FilesOutlined" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Left" Width="36" Margin="82,0,0,0" Click="BtnSaveAs_Click"/>
                 </Grid>
@@ -30,6 +30,6 @@
                 <DataGrid x:Name="dataGrid" Margin="0,0,0,0"/>
             </GroupBox>
         </Grid>
-        <Canvas x:Name="Canvas" Margin="155,21,10,10" Background="White" MouseDown="Canvas_MouseDown"/>
+        <Frame x:Name="frame" Content="" Margin="159,23,10,10" BorderBrush="Black" Background="White" MouseDown="Frame_MouseDown"/>
     </Grid>
 </Window>

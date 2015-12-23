@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using FlowSystem.Business.Interfaces;
+using FlowSystem.Common;
+using Microsoft.Win32;
 
 namespace FlowSystem.Presentation
 {
@@ -14,6 +17,8 @@ namespace FlowSystem.Presentation
         private static readonly Brush _buttonActiveColor = Brushes.White;
 
         private IFlowModel _flowModel;
+
+        private bool _changes = false;
 
         private Mode _mode = Mode.Mouse;
         public MainWindow(IFlowModel flowModel)
@@ -37,6 +42,15 @@ namespace FlowSystem.Presentation
             {
                 button.Background = _buttonColor;
             }
+        }
+
+        private bool CheckChangesAndAsk()
+        {
+            return !_changes ||
+                   MessageBox.Show(
+                       "You have unsaved changes, do you want to continue?",
+                       "Flow system",
+                       MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
 
 #region ButtonEvents
@@ -84,43 +98,88 @@ namespace FlowSystem.Presentation
 
         private void BtnOpenFile_Click(object sender, RoutedEventArgs e)
         {
+            ResetMode();
+            if (!CheckChangesAndAsk())
+                return;
 
+            var openFileDialog = new OpenFileDialog();
+            if(openFileDialog.ShowDialog() != true)
+                return;
+            
+            _flowModel.OpenFile(openFileDialog.FileName);
+
+            _changes = false;
+        }
+
+        private void Save(bool overwrite)
+        {
+            ResetMode();
+
+            var saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() != true)
+                return;
+
+            if (_flowModel.FileAlreadyExist(saveFileDialog.FileName)
+                && !overwrite
+                && MessageBox.Show("The file already excist, do you want to overwrite?", "Flow system", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                return;
+
+            _flowModel.SaveFile(saveFileDialog.FileName);
+
+            _changes = false;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-
+            Save(false);
         }
 
         private void BtnSaveAs_Click(object sender, RoutedEventArgs e)
         {
+            Save(true);
         }
         #endregion
 
-        private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Frame_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            switch (_mode)
+            var p = e.GetPosition(this);
+            var point = new PointEntity {X = (int)p.X, Y = (int)p.Y};
+
+            try
             {
-                case Mode.Mouse:
+                switch (_mode)
+                {
+                    case Mode.Mouse:
 
-                break;
-                case Mode.Merger:
+                        break;
+                    case Mode.Merger:
+                        _flowModel.AddMerger(point);
+                        _changes = true;
+                        break;
+                    case Mode.Pump:
+                        _flowModel.AddPump(point);
+                        _changes = true;
+                        break;
+                    case Mode.Draw:
 
-                break;
-                case Mode.Pump:
-
-                break;
-                case Mode.Draw:
-
-                break;
-                case Mode.Sink:
-
-                break;
-                case Mode.Splitter:
-
-                break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                        _changes = true;
+                        break;
+                    case Mode.Sink:
+                        _flowModel.AddSink(point);
+                        _changes = true;
+                        break;
+                    case Mode.Splitter:
+                        _flowModel.AddSplitter(point);
+                        _changes = true;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                ResetMode();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
