@@ -4,6 +4,8 @@ using FlowSystem.Common;
 using FlowSystem.Common.Components;
 using FlowSystem.Common.Interfaces;
 using FlowSystem.Data;
+using FlowSystem.Data.Interfaces;
+using FlowSystem.Data.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
 
@@ -54,7 +56,7 @@ namespace FlowSystem.UnitTest
         [TestMethod]
         public void TestSave()
         {
-            _dataAccesLayer.SaveFile(_flowNetwork, "test.xml");
+            _dataAccesLayer.SaveFile(_flowNetwork.ToFlowFile(), "test.xml");
         }
     }
 }

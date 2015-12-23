@@ -76,7 +76,7 @@ namespace FlowSystem.Business
                     EndComponent = end,
                     EndComponentIndex = endIndex,
                     MaximumFlow = 0,
-                    Path = path,
+                    Path = path.ToList(),
                     StartComponent = start,
                     StartComponentIndex = startIndex
                 });

@@ -9,6 +9,5 @@ namespace FlowSystem.Common.Components
         public PointEntity Position { get; set; }
         public double[] FlowOutput { get; set; }
         public double[] FlowInput { get; set; }
-    
     }
 }

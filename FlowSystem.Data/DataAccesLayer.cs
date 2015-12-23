@@ -2,6 +2,8 @@
 using System.Xml;
 using System.Xml.Serialization;
 using FlowSystem.Common;
+using FlowSystem.Data.Files;
+using FlowSystem.Data.Interfaces;
 
 namespace FlowSystem.Data
 {
@@ -17,10 +19,10 @@ namespace FlowSystem.Data
             throw new System.NotImplementedException();
         }
 
-        public void SaveFile(FlowNetworkEntity flowNetwork, string path)
+        public void SaveFile(FlowFile flowNetwork, string path)
         {
             XmlDocument xmlDocument = new XmlDocument();
-            XmlSerializer serializer = new XmlSerializer(typeof(FlowNetworkEntity));
+            XmlSerializer serializer = new XmlSerializer(typeof(FlowFile));
             using (MemoryStream stream = new MemoryStream())
             {
                 serializer.Serialize(stream, flowNetwork);

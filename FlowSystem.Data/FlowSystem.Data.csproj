@@ -40,9 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Files\ComponentFile.cs" />
     <Compile Include="DataAccesLayer.cs" />
-    <Compile Include="IDataAccesLayer.cs" />
+    <Compile Include="Files\FlowFile.cs" />
+    <Compile Include="Files\PipeFile.cs" />
+    <Compile Include="Interfaces\IDataAccesLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\DataTransformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FlowSystem.Common\FlowSystem.Common.csproj">
