@@ -57,6 +57,38 @@ namespace FlowSystem.Data.Utility
             };
         }
 
+        public static FlowNetworkEntity FromFlowFile(this FlowFile source)
+        {
+            // Combine all components
+            var components = new List<IComponent>();
+            components.AddRange(source.Mergers.Select(x => x.Component));
+            components.AddRange(source.Pumps.Select(x => x.Component));
+            components.AddRange(source.Sinks.Select(x => x.Component));
+            components.AddRange(source.Splitters.Select(x => x.Component));
+
+            // Put Id's and components in dictionary so relation can be added again
+            var ids = new Dictionary<int, IComponent>();
+            source.Mergers.ForEach(x => ids[x.Id] = x.Component);
+            source.Pumps.ForEach(x => ids[x.Id] = x.Component);
+            source.Sinks.ForEach(x => ids[x.Id] = x.Component);
+            source.Splitters.ForEach(x => ids[x.Id] = x.Component);
+
+            // Make pipes and add the relation
+            var pipes = source.Pipes.Select(x =>
+            {
+                var pipe = x.Pipe;
+                pipe.StartComponent = ids[x.StartComponent] as IFlowOutput;
+                pipe.EndComponent = ids[x.EndComponent] as IFlowInput;
+                return pipe;
+            }).ToList();
+
+            return new FlowNetworkEntity
+            {
+                Components = components,
+                Pipes = pipes
+            };
+        }
+
         public static ComponentFile<T> ToComponentFile<T>(this T source)
         {
             return new ComponentFile<T>

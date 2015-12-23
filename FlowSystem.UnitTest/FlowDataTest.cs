@@ -1,4 +1,6 @@
-﻿using FlowSystem.Business;
+﻿using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using FlowSystem.Business;
 using FlowSystem.Business.Interfaces;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
@@ -57,6 +59,17 @@ namespace FlowSystem.UnitTest
         public void TestSave()
         {
             _dataAccesLayer.SaveFile(_flowNetwork.ToFlowFile(), "test.xml");
+        }
+
+        [TestMethod]
+        public void TestOpen()
+        {
+            TestSave();
+
+            var opened = _dataAccesLayer.OpenFile("test.xml");
+
+            Assert.AreEqual(opened.Components.OfType<SplitterEntity>().First().Distrubution, 70);
+            Assert.AreEqual(opened.Pipes.Count(x => x.EndComponent is MergerEntity && x.StartComponent is PumpEntity),2);
         }
     }
 }
