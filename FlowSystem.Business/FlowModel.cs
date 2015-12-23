@@ -6,6 +6,7 @@ using FlowSystem.Business.Utility;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
 using FlowSystem.Common.Interfaces;
+using FlowSystem.Data.Interfaces;
 
 namespace FlowSystem.Business
 {
@@ -16,10 +17,12 @@ namespace FlowSystem.Business
 
         public FlowNetworkEntity FlowNetwork { get; set; }
         private readonly IFlowCalculator _flowCalculator;
+        private readonly IDataAccesLayer _dataAccesLayer;
 
-        public FlowModel(IFlowCalculator flowCalculator)
+        public FlowModel(IFlowCalculator flowCalculator, IDataAccesLayer dataAccesLayer)
         {
             _flowCalculator = flowCalculator;
+            _dataAccesLayer = dataAccesLayer;
 
             FlowNetwork = new FlowNetworkEntity
             {
@@ -197,12 +200,12 @@ namespace FlowSystem.Business
 
         public void OpenFile(string path)
         {
-            throw new System.NotImplementedException();
+            FlowNetwork = _dataAccesLayer.OpenFile(path);
         }
 
         public void SaveFile(string path)
         {
-            throw new System.NotImplementedException();
+            _dataAccesLayer.SaveFile(FlowNetwork, path);
         }
     }
 }

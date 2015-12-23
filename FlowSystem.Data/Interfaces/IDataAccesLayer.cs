@@ -7,6 +7,6 @@ namespace FlowSystem.Data.Interfaces
     {
         bool FileAlreadyExist(string path);
         FlowNetworkEntity OpenFile(string path);
-        void SaveFile(FlowFile flowNetwork, string path);
+        void SaveFile(FlowNetworkEntity flowNetwork, string path);
     }
 }

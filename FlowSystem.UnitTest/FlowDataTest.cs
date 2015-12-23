@@ -58,7 +58,7 @@ namespace FlowSystem.UnitTest
         [TestMethod]
         public void TestSave()
         {
-            _dataAccesLayer.SaveFile(_flowNetwork.ToFlowFile(), "test.xml");
+            _dataAccesLayer.SaveFile(_flowNetwork, "test.xml");
         }
 
         [TestMethod]

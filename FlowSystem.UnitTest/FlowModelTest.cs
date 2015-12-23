@@ -5,6 +5,8 @@ using FlowSystem.Business;
 using FlowSystem.Business.Interfaces;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
+using FlowSystem.Data;
+using FlowSystem.Data.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Ninject;
 
@@ -21,6 +23,7 @@ namespace FlowSystem.UnitTest
         {
             _container = new StandardKernel();
             _container.Bind<IFlowModel>().To<FlowModel>().InTransientScope();
+            _container.Bind<IDataAccesLayer>().To<DataAccesLayer>().InTransientScope();
             _container.Bind<IFlowCalculator>().To<FlowCalculator>().InSingletonScope();
             _flowModel = _container.Get<IFlowModel>();
         }

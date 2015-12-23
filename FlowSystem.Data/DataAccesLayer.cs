@@ -17,22 +17,24 @@ namespace FlowSystem.Data
 
         public FlowNetworkEntity OpenFile(string path)
         {
+            FlowFile flowFile;
+
             var serializer = new XmlSerializer(typeof(FlowFile));
 
             var reader = new StreamReader(path);
-            var flowFile = (FlowFile)serializer.Deserialize(reader);
+            flowFile = (FlowFile)serializer.Deserialize(reader);
             reader.Close();
 
             return flowFile.FromFlowFile();
         }
 
-        public void SaveFile(FlowFile flowNetwork, string path)
+        public void SaveFile(FlowNetworkEntity flowNetwork, string path)
         {
             var xmlDocument = new XmlDocument();
             var serializer = new XmlSerializer(typeof(FlowFile));
             using (var stream = new MemoryStream())
             {
-                serializer.Serialize(stream, flowNetwork);
+                serializer.Serialize(stream, flowNetwork.ToFlowFile());
                 stream.Position = 0;
                 xmlDocument.Load(stream);
                 xmlDocument.Save(path);
