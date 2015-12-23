@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowSystem.Data", "FlowSyst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowSystem.UnitTest", "FlowSystem.UnitTest\FlowSystem.UnitTest.csproj", "{ECFA3644-8CC9-42DE-9F47-62D864DC7B28}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlowSystem.Launcher", "FlowSystem.Launcher\FlowSystem.Launcher.csproj", "{D26E0AF4-0F55-481B-8258-CEB8232E6719}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{ECFA3644-8CC9-42DE-9F47-62D864DC7B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECFA3644-8CC9-42DE-9F47-62D864DC7B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECFA3644-8CC9-42DE-9F47-62D864DC7B28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D26E0AF4-0F55-481B-8258-CEB8232E6719}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26E0AF4-0F55-481B-8258-CEB8232E6719}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26E0AF4-0F55-481B-8258-CEB8232E6719}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26E0AF4-0F55-481B-8258-CEB8232E6719}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
