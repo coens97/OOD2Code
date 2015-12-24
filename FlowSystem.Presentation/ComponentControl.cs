@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Controls;
+using System.Windows.Input;
 using FlowSystem.Common.Interfaces;
 using FontAwesome.WPF;
 
@@ -9,11 +10,13 @@ namespace FlowSystem.Presentation
     public class ComponentControl : ImageAwesome
     {
         public IComponent Component { get; set; }
-        public ComponentControl(IComponent component)
+        public ComponentControl(IComponent component, MouseButtonEventHandler clickEvent)
         {
             Width = 32;
             Height = 32;
 
+            this.MouseDown += clickEvent;
+            
             Component = component;
             Canvas.SetLeft(this, Component.Position.X);
             Canvas.SetTop(this, Component.Position.Y);
@@ -36,5 +39,6 @@ namespace FlowSystem.Presentation
                     throw new Exception("Error happened, the developer forgot to implement something...sorry :(");
             }
         }
+
     }
 }

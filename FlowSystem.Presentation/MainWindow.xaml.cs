@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using FlowSystem.Business.Interfaces;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
+using FontAwesome.WPF;
 using Microsoft.Win32;
 
 namespace FlowSystem.Presentation
@@ -21,10 +23,12 @@ namespace FlowSystem.Presentation
         private IFlowModel _flowModel;
 
         private bool _changes = false;
-
         private Mode _mode = Mode.Mouse;
+        private ComponentControl _selectedComponent;
+
         public MainWindow(IFlowModel flowModel)
         {
+            Icon = ImageAwesome.CreateImageSource(FontAwesomeIcon.Paw, Brushes.Black);
             _flowModel = flowModel;
             InitializeComponent();
             ResetMode();
@@ -146,7 +150,7 @@ namespace FlowSystem.Presentation
         {
             var p = e.GetPosition(CanvasFlow);
             var point = new PointEntity {X = p.X, Y = p.Y};
-
+            var mouseDownHandler = new MouseButtonEventHandler(Component_MouseDown);
             try
             {
                 switch (_mode)
@@ -156,12 +160,12 @@ namespace FlowSystem.Presentation
                         break;
                     case Mode.Merger:
                         var merger = _flowModel.AddMerger(point);
-                        CanvasFlow.Children.Add(new ComponentControl(merger));
+                        CanvasFlow.Children.Add(new ComponentControl(merger, mouseDownHandler));
                         _changes = true;
                         break;
                     case Mode.Pump:
                         var pump = _flowModel.AddPump(point);
-                        CanvasFlow.Children.Add(new ComponentControl(pump));
+                        CanvasFlow.Children.Add(new ComponentControl(pump, mouseDownHandler));
                         _changes = true;
                         break;
                     case Mode.Draw:
@@ -170,12 +174,12 @@ namespace FlowSystem.Presentation
                         break;
                     case Mode.Sink:
                         var sink = _flowModel.AddSink(point);
-                        CanvasFlow.Children.Add(new ComponentControl(sink));
+                        CanvasFlow.Children.Add(new ComponentControl(sink, mouseDownHandler));
                         _changes = true;
                         break;
                     case Mode.Splitter:
                         var splitter = _flowModel.AddSplitter(point);
-                        CanvasFlow.Children.Add(new ComponentControl(splitter));
+                        CanvasFlow.Children.Add(new ComponentControl(splitter, mouseDownHandler));
                         _changes = true;
                         break;
                     default:
@@ -188,5 +192,30 @@ namespace FlowSystem.Presentation
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void Component_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Components are only selectable when in mouse mode
+            if (_mode != Mode.Mouse)
+                return;
+
+            var component = sender as ComponentControl;
+            if (component == null)
+                throw new Exception("Something went wrong, pleasee try again.");
+
+            var style = new Style
+            {
+                TargetType = typeof(ComponentControl)
+            };
+
+            style.Setters.Add(new Setter(OpacityProperty, 0.4)); // So lazy
+            component.Style = style;
+
+            if (_selectedComponent != null)
+                _selectedComponent.Style = null;
+
+            _selectedComponent = component;
+        }
+
     }
 }
