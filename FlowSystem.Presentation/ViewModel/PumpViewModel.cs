@@ -1,4 +1,4 @@
-﻿namespace FlowSystem.Presentation.Filters
+﻿namespace FlowSystem.Presentation.ViewModel
 {
     public class PumpViewModel : ViewModelBase
     {

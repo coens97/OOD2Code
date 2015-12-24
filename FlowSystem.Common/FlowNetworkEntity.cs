@@ -8,7 +8,7 @@ namespace FlowSystem.Common
     [Serializable]
     public class FlowNetworkEntity
     {
-        public IList<IComponent> Components { get; set; }
+        public IList<IComponentEntityEntity> Components { get; set; }
         public IList<PipeEntity> Pipes { get; set; }
     }
 }

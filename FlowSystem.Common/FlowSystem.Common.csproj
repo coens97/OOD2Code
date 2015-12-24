@@ -46,7 +46,7 @@
     <Compile Include="Components\SinkEntity.cs" />
     <Compile Include="Components\SplitterEntity.cs" />
     <Compile Include="FlowNetworkEntity.cs" />
-    <Compile Include="Interfaces\IComponent.cs" />
+    <Compile Include="Interfaces\IComponentEntity.cs" />
     <Compile Include="Interfaces\IFlowInput.cs" />
     <Compile Include="Interfaces\IFlowOutput.cs" />
     <Compile Include="PointEntity.cs" />

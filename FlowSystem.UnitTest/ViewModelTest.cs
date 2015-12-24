@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FlowSystem.Presentation.Filters;
+using FlowSystem.Presentation.ViewModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FlowSystem.UnitTest

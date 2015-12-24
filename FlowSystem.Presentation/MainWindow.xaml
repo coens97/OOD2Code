@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FlowSystem.Presentation"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:my="clr-namespace:FlowSystem.Presentation.ViewModel"
         mc:Ignorable="d"
         Title="Flow system" Height="350" Width="525" Background="#FFF1F1F1">
     <Grid>
@@ -27,7 +28,30 @@
                 </Grid>
             </GroupBox>
             <GroupBox x:Name="groupBox2" Header="Properties" Margin="0,177,0,0">
-                <DataGrid x:Name="dataGrid" Margin="0,0,0,0"/>
+                <ContentControl x:Name="PropertiesSidebar">
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type my:PipeViewModel}">
+                            <StackPanel>
+                                <TextBlock Text="Maximum flow:" />
+                                <TextBox Text="{Binding MaximumFlow}" />
+                            </StackPanel>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type my:PumpViewModel}">
+                            <StackPanel>
+                                <TextBlock Text="Maximum flow:" />
+                                <TextBox Text="{Binding MaximumFlow}" />
+                                <TextBlock Text="Current flow:" />
+                                <TextBox Text="{Binding CurrentFlow}" />
+                            </StackPanel>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type my:SplitterViewModel}">
+                            <StackPanel>
+                                <TextBlock Text="Devision:" />
+                                <TextBlock Text="{Binding Devision}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
             </GroupBox>
         </Grid>
         <Canvas x:Name="CanvasFlow" Margin="158,21,10,10" Background="White" MouseDown="Canvas_MouseDown" RenderTransformOrigin="0,0">

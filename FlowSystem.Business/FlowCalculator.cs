@@ -39,7 +39,7 @@ namespace FlowSystem.Business
             ProcessPipequeue(flowNetwork, pipeQueue);
         }
 
-        private static void ProcessComponent(IComponent component)
+        private static void ProcessComponent(IComponentEntityEntity component)
         {
             var merger = component as MergerEntity;
             var splitter = component as SplitterEntity;
@@ -60,7 +60,7 @@ namespace FlowSystem.Business
             }
         }
 
-        public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponent component)
+        public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponentEntityEntity component)
         {
             ProcessComponent(component);
 

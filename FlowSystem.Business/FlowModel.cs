@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using FlowSystem.Business.Interfaces;
 using FlowSystem.Business.Utility;
@@ -26,12 +27,12 @@ namespace FlowSystem.Business
 
             FlowNetwork = new FlowNetworkEntity
             {
-                Components = new List<IComponent>(),
+                Components = new List<IComponentEntityEntity>(),
                 Pipes = new List<PipeEntity>()
             };
         }
 
-        private bool PositionFree(PointEntity point, IComponent exclude = null)
+        private bool PositionFree(PointEntity point, IComponentEntityEntity exclude = null)
         {
             return !FlowNetwork.Components.Any(x =>
                 x != exclude &&
@@ -140,12 +141,8 @@ namespace FlowSystem.Business
         }
 #endregion
 
-        public void ComponentPropertyChanged(IComponent component)
-        {
-            throw new System.NotImplementedException();
-        }
 #region Delete
-        public void DeleteComponent(IComponent component)
+        public void DeleteComponent(IComponentEntityEntity component)
         {
             // get all pipes connected to component
             var pipes = FlowNetwork.Pipes.Where(x =>
@@ -166,14 +163,14 @@ namespace FlowSystem.Business
         #endregion
 
 #region Please hide me
-        public void DuplicateComponent(IComponent component, PointEntity point)
+        public void DuplicateComponent(IComponentEntityEntity component, PointEntity point)
         {
             /// PLEASE IGNORE THIS PIECE OF CODE, duplicating component was a stupid idea, even some crappy utility class is added.
             /// This code is a good example of shitty unmaintainable code which is prone to unexpected bugs
             if (!PositionFree(point))
                 throw new Exception("Position where component is place is not free.");
 
-            IComponent c;
+            IComponentEntityEntity c;
             switch (component.GetType().ToString())
             {
                 case "FlowSystem.Common.Components.MergerEntity":
@@ -201,7 +198,7 @@ namespace FlowSystem.Business
             return _dataAccesLayer.FileAlreadyExist(path);
         }
 
-        public void MoveComponent(IComponent component, PointEntity point)
+        public void MoveComponent(IComponentEntityEntity component, PointEntity point)
         {
             if (!PositionFree(point, component))
                 throw new Exception("Can't overlap components.");
@@ -217,6 +214,11 @@ namespace FlowSystem.Business
         public void SaveFile(string path)
         {
             _dataAccesLayer.SaveFile(FlowNetwork, path);
+        }
+
+        public void ComponentPropertyChanged(IComponentEntityEntity component, PropertyChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
     }
 }

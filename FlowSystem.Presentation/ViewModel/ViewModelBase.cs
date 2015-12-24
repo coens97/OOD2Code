@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace FlowSystem.Presentation.Filters
+namespace FlowSystem.Presentation.ViewModel
 {
     public abstract class ViewModelBase : INotifyPropertyChanged
     {

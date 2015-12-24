@@ -1,6 +1,6 @@
 ﻿namespace FlowSystem.Common.Interfaces
 {
-    public interface IComponent
+    public interface IComponentEntityEntity
     {
         PointEntity Position { get; set; }
     }

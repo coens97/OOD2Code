@@ -1,6 +1,6 @@
 ﻿namespace FlowSystem.Common.Interfaces
 {
-    public interface IFlowOutput : IComponent
+    public interface IFlowOutput : IComponentEntityEntity
     {
         double[] FlowOutput { get; set; }
     }

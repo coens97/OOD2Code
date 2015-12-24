@@ -4,7 +4,7 @@ using FlowSystem.Common.Interfaces;
 namespace FlowSystem.Common.Components
 {
     [Serializable]
-    public class PumpEntity : IComponent, IFlowOutput
+    public class PumpEntity : IComponentEntityEntity, IFlowOutput
     {
         public double CurrentFlow { get; set; }
         public double[] FlowOutput { get; set; }

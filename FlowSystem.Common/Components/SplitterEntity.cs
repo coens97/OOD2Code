@@ -4,7 +4,7 @@ using FlowSystem.Common.Interfaces;
 namespace FlowSystem.Common.Components
 {
     [Serializable]
-    public class SplitterEntity : IComponent, IFlowInput, IFlowOutput
+    public class SplitterEntity : IComponentEntityEntity, IFlowInput, IFlowOutput
     {
         public int Distrubution { get; set; }
         public double[] FlowInput { get; set; }

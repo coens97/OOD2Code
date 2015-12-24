@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using FlowSystem.Business.Interfaces;
 using FlowSystem.Common;
+using FlowSystem.Common.Components;
 using FlowSystem.Presentation.Controls;
+using FlowSystem.Presentation.ViewModel;
 using FontAwesome.WPF;
 using Microsoft.Win32;
+using System.ComponentModel;
+using FlowSystem.Common.Interfaces;
 
 namespace FlowSystem.Presentation
 {
@@ -146,11 +151,62 @@ namespace FlowSystem.Presentation
         }
         #endregion
 
+        private void SetSelectedComponent(ComponentControl component)
+        {
+            if (_selectedComponent != null)
+                _selectedComponent.Style = null;
+
+            var style = new Style
+            {
+                TargetType = typeof(ComponentControl)
+            };
+
+            style.Setters.Add(new Setter(OpacityProperty, 0.4)); // So lazy
+            component.Style = style;
+
+            _selectedComponent = component;
+
+            var pump = component.Component as PumpEntity;
+            var splitter = component.Component as SplitterEntity;
+
+            if (pump != null)
+            {
+                var pumpViewModel = new PumpViewModel
+                {
+                    CurrentFlow = pump.CurrentFlow,
+                    MaximumFlow = pump.MaximumFlow
+                };
+                pumpViewModel.PropertyChanged += ViewModelChanged;
+                PropertiesSidebar.Content = pumpViewModel;
+            }
+            else if (splitter != null)
+            {
+                var splitterViewModel = new SplitterViewModel
+                {
+                    Devision = splitter.Distrubution
+                };
+                splitterViewModel.PropertyChanged += ViewModelChanged;
+                PropertiesSidebar.Content = splitterViewModel;
+            }
+            else
+            {
+                PropertiesSidebar.Content = null;
+            }
+        }
+
+        private void AddComponentToScreen(IComponentEntityEntity component)
+        {
+            var mouseDownHandler = new MouseButtonEventHandler(Component_MouseDown);
+            var componentControl = new ComponentControl(component, mouseDownHandler);
+            CanvasFlow.Children.Add(componentControl);
+            SetSelectedComponent(componentControl);
+            _changes = true;
+        }
+#region CanvasMousdownEvents
         private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var p = e.GetPosition(CanvasFlow);
             var point = new PointEntity {X = p.X, Y = p.Y};
-            var mouseDownHandler = new MouseButtonEventHandler(Component_MouseDown);
             try
             {
                 switch (_mode)
@@ -159,28 +215,20 @@ namespace FlowSystem.Presentation
 
                         break;
                     case Mode.Merger:
-                        var merger = _flowModel.AddMerger(point);
-                        CanvasFlow.Children.Add(new ComponentControl(merger, mouseDownHandler));
-                        _changes = true;
+                        AddComponentToScreen(_flowModel.AddMerger(point));
                         break;
                     case Mode.Pump:
-                        var pump = _flowModel.AddPump(point);
-                        CanvasFlow.Children.Add(new ComponentControl(pump, mouseDownHandler));
-                        _changes = true;
+                        AddComponentToScreen(_flowModel.AddPump(point));
                         break;
                     case Mode.Draw:
 
                         _changes = true;
                         break;
                     case Mode.Sink:
-                        var sink = _flowModel.AddSink(point);
-                        CanvasFlow.Children.Add(new ComponentControl(sink, mouseDownHandler));
-                        _changes = true;
+                        AddComponentToScreen(_flowModel.AddSink(point));
                         break;
                     case Mode.Splitter:
-                        var splitter = _flowModel.AddSplitter(point);
-                        CanvasFlow.Children.Add(new ComponentControl(splitter, mouseDownHandler));
-                        _changes = true;
+                        AddComponentToScreen(_flowModel.AddSplitter(point));
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -203,19 +251,13 @@ namespace FlowSystem.Presentation
             if (component == null)
                 throw new Exception("Something went wrong, pleasee try again.");
 
-            var style = new Style
-            {
-                TargetType = typeof(ComponentControl)
-            };
-
-            style.Setters.Add(new Setter(OpacityProperty, 0.4)); // So lazy
-            component.Style = style;
-
-            if (_selectedComponent != null)
-                _selectedComponent.Style = null;
-
-            _selectedComponent = component;
+            SetSelectedComponent(component);            
         }
+        #endregion
 
+        private void ViewModelChanged(object sender, PropertyChangedEventArgs e)
+        {
+            _flowModel.ComponentPropertyChanged(_selectedComponent.Component, e);
+        }
     }
 }

@@ -76,8 +76,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\ComponentControl.cs" />
-    <Compile Include="Filters\PumpViewModel.cs" />
-    <Compile Include="Filters\ViewModelBase.cs" />
+    <Compile Include="ViewModel\PipeViewModel.cs" />
+    <Compile Include="ViewModel\PumpViewModel.cs" />
+    <Compile Include="ViewModel\SplitterViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

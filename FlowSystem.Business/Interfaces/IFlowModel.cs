@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
 using FlowSystem.Common.Interfaces;
@@ -13,13 +14,13 @@ namespace FlowSystem.Business.Interfaces
         PumpEntity AddPump(PointEntity point);
         SinkEntity AddSink(PointEntity point);
         SplitterEntity AddSplitter(PointEntity point);
-        void ComponentPropertyChanged(IComponent component);
-        void DeleteComponent(IComponent component);
+        void DeleteComponent(IComponentEntityEntity component);
         void DeletePipe(PipeEntity pipe);
-        void DuplicateComponent(IComponent component, PointEntity point);
+        void DuplicateComponent(IComponentEntityEntity component, PointEntity point);
         bool FileAlreadyExist(string path);
-        void MoveComponent(IComponent component, PointEntity point);
+        void MoveComponent(IComponentEntityEntity component, PointEntity point);
         void OpenFile(string path);
         void SaveFile(string path);
+        void ComponentPropertyChanged(IComponentEntityEntity component, PropertyChangedEventArgs e);
     }
 }
