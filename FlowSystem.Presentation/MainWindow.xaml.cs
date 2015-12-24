@@ -28,6 +28,11 @@ namespace FlowSystem.Presentation
             _flowModel = flowModel;
             InitializeComponent();
             ResetMode();
+
+            var s = new ComponentControl(new SplitterEntity() { Position = new PointEntity { X = 200, Y = 0} });
+            Canvas.SetLeft(s, 100);
+            Canvas.SetTop(s, 50);
+            CanvasFlow.Children.Add(s);
         }
 
         private void ResetMode()

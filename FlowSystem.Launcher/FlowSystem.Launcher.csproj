@@ -70,10 +70,6 @@
       <Project>{2d729e92-872a-4023-8400-9f4b21661bee}</Project>
       <Name>FlowSystem.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FlowSystem.Presentation.Controls\FlowSystem.Presentation.Controls.csproj">
-      <Project>{53c2f0d2-bfdc-40d2-8a6a-c7af5e19c14c}</Project>
-      <Name>FlowSystem.Presentation.Controls</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FlowSystem.Presentation\FlowSystem.Presentation.csproj">
       <Project>{6746e7af-0c0e-4963-b9a1-06a09a2dd786}</Project>
       <Name>FlowSystem.Presentation</Name>
