@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FlowSystem.Presentation"
+        xmlns:fc="clr-namespace:FlowSystem.Presentation.Controls;assembly=FlowSystem.Presentation.Controls"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
         Title="Flow system" Height="350" Width="525" Background="#FFF1F1F1">
@@ -30,6 +31,8 @@
                 <DataGrid x:Name="dataGrid" Margin="0,0,0,0"/>
             </GroupBox>
         </Grid>
-        <Frame x:Name="frame" Content="" Margin="159,23,10,10" BorderBrush="Black" Background="White" MouseDown="Frame_MouseDown"/>
+        <Canvas Margin="158,21,10,10" Background="White">
+            <fc:PumpControl Canvas.Left="40" Canvas.Top="128" />
+        </Canvas>
     </Grid>
 </Window>

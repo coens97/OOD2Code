@@ -75,7 +75,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawable\Drawable.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -119,7 +118,12 @@
       <Project>{e250e4de-741d-41a0-a7a9-fa3730282b57}</Project>
       <Name>FlowSystem.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FlowSystem.Presentation.Controls\FlowSystem.Presentation.Controls.csproj">
+      <Project>{53c2f0d2-bfdc-40d2-8a6a-c7af5e19c14c}</Project>
+      <Name>FlowSystem.Presentation.Controls</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
