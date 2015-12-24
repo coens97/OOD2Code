@@ -21,8 +21,8 @@
                     <Button x:Name="BtnMouse" fa:Awesome.Content="MousePointer" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" Height="36" VerticalAlignment="Top" HorizontalAlignment="Left" Width="36" Click="BtnMouse_Click" />
                     <Button x:Name="BtnDraw" fa:Awesome.Content="Pencil" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Left" Width="36" Height="36" Margin="41,0,0,0" VerticalAlignment="Top" Click="BtnDraw_Click"/>
                     <Button x:Name="BtnMerger" fa:Awesome.Content="ChevronRight" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Right" Width="36" Height="36" VerticalAlignment="Top" Click="BtnMerger_Click"/>
-                    <Button x:Name="BtnPump" fa:Awesome.Content="SignIn" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" Height="36" HorizontalAlignment="Left" Width="36" VerticalAlignment="Bottom" Click="BtnPump_Click" />
-                    <Button x:Name="BtnSink" fa:Awesome.Content="SignOut" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" Height="36" Margin="41,0,0,0" VerticalAlignment="Bottom" Click="BtnSink_Click" HorizontalAlignment="Left" Width="36"/>
+                    <Button x:Name="BtnPump" fa:Awesome.Content="SignOut" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" Height="36" HorizontalAlignment="Left" Width="36" VerticalAlignment="Bottom" Click="BtnPump_Click" />
+                    <Button x:Name="BtnSink" fa:Awesome.Content="SignIn" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" Height="36" Margin="41,0,0,0" VerticalAlignment="Bottom" Click="BtnSink_Click" HorizontalAlignment="Left" Width="36"/>
                     <Button x:Name="BtnSplitter" fa:Awesome.Content="ChevronLeft" TextElement.FontFamily="pack://application:,,,/FontAwesome.WPF;component/#FontAwesome" FontSize="24" HorizontalAlignment="Right" Width="36" Height="36" Margin="0,0,0,0" VerticalAlignment="Bottom" Click="BtnSplitter_Click"/>
                 </Grid>
             </GroupBox>
@@ -30,7 +30,7 @@
                 <DataGrid x:Name="dataGrid" Margin="0,0,0,0"/>
             </GroupBox>
         </Grid>
-        <Canvas x:Name="CanvasFlow" Margin="158,21,10,10" Background="White">
+        <Canvas x:Name="CanvasFlow" Margin="158,21,10,10" Background="White" MouseDown="Canvas_MouseDown" RenderTransformOrigin="0,0">
         </Canvas>
     </Grid>
 </Window>

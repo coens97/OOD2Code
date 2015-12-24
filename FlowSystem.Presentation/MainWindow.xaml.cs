@@ -28,11 +28,6 @@ namespace FlowSystem.Presentation
             _flowModel = flowModel;
             InitializeComponent();
             ResetMode();
-
-            var s = new ComponentControl(new SplitterEntity() { Position = new PointEntity { X = 200, Y = 0} });
-            Canvas.SetLeft(s, 100);
-            Canvas.SetTop(s, 50);
-            CanvasFlow.Children.Add(s);
         }
 
         private void ResetMode()
@@ -147,10 +142,10 @@ namespace FlowSystem.Presentation
         }
         #endregion
 
-        private void Frame_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            var p = e.GetPosition(this);
-            var point = new PointEntity {X = (int)p.X, Y = (int)p.Y};
+            var p = e.GetPosition(CanvasFlow);
+            var point = new PointEntity {X = p.X, Y = p.Y};
 
             try
             {
@@ -160,11 +155,13 @@ namespace FlowSystem.Presentation
 
                         break;
                     case Mode.Merger:
-                        _flowModel.AddMerger(point);
+                        var merger = _flowModel.AddMerger(point);
+                        CanvasFlow.Children.Add(new ComponentControl(merger));
                         _changes = true;
                         break;
                     case Mode.Pump:
-                        _flowModel.AddPump(point);
+                        var pump = _flowModel.AddPump(point);
+                        CanvasFlow.Children.Add(new ComponentControl(pump));
                         _changes = true;
                         break;
                     case Mode.Draw:
@@ -172,11 +169,13 @@ namespace FlowSystem.Presentation
                         _changes = true;
                         break;
                     case Mode.Sink:
-                        _flowModel.AddSink(point);
+                        var sink = _flowModel.AddSink(point);
+                        CanvasFlow.Children.Add(new ComponentControl(sink));
                         _changes = true;
                         break;
                     case Mode.Splitter:
-                        _flowModel.AddSplitter(point);
+                        var splitter = _flowModel.AddSplitter(point);
+                        CanvasFlow.Children.Add(new ComponentControl(splitter));
                         _changes = true;
                         break;
                     default:

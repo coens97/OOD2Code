@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Controls;
 using FlowSystem.Common.Interfaces;
 using FontAwesome.WPF;
 
@@ -12,7 +13,10 @@ namespace FlowSystem.Presentation
         {
             Width = 32;
             Height = 32;
+
             Component = component;
+            Canvas.SetLeft(this, Component.Position.X);
+            Canvas.SetTop(this, Component.Position.Y);
 
             switch (component.GetType().ToString())
             {
@@ -20,10 +24,10 @@ namespace FlowSystem.Presentation
                     Icon = FontAwesomeIcon.ChevronRight;
                     break;
                 case "FlowSystem.Common.Components.PumpEntity":
-                    Icon = FontAwesomeIcon.SignIn;
+                    Icon = FontAwesomeIcon.SignOut;
                     break;
                 case "FlowSystem.Common.Components.SinkEntity":
-                    Icon = FontAwesomeIcon.SignOut;
+                    Icon = FontAwesomeIcon.SignIn;
                     break;
                 case "FlowSystem.Common.Components.SplitterEntity":
                     Icon = FontAwesomeIcon.ChevronLeft;

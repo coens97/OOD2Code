@@ -8,11 +8,11 @@ namespace FlowSystem.Business.Interfaces
     public interface IFlowModel
     {
         FlowNetworkEntity FlowNetwork { get; set; }
-        void AddMerger(PointEntity point);
-        void AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path, int startIndex, int endIndex);
-        void AddPump(PointEntity point);
-        void AddSink(PointEntity point);
-        void AddSplitter(PointEntity point);
+        MergerEntity AddMerger(PointEntity point);
+        PipeEntity AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path, int startIndex, int endIndex);
+        PumpEntity AddPump(PointEntity point);
+        SinkEntity AddSink(PointEntity point);
+        SplitterEntity AddSplitter(PointEntity point);
         void ComponentPropertyChanged(IComponent component);
         void DeleteComponent(IComponent component);
         void DeletePipe(PipeEntity pipe);

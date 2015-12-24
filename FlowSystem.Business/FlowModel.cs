@@ -43,21 +43,23 @@ namespace FlowSystem.Business
         }
 
 #region Add
-        public void AddMerger(PointEntity point)
+        public MergerEntity AddMerger(PointEntity point)
         {
             if (!PositionFree(point))
                 throw new Exception("Position where component is place is not free.");
 
-            FlowNetwork.Components.Add(
-                new MergerEntity
-                {
-                    FlowInput = new double[2],
-                    FlowOutput = new double[1],
-                    Position = point
-                });
+            var merger = new MergerEntity
+            {
+                FlowInput = new double[2],
+                FlowOutput = new double[1],
+                Position = point
+            };
+
+            FlowNetwork.Components.Add(merger);
+            return merger;
         }
 
-        public void AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path, int startIndex, int endIndex)
+        public PipeEntity AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path, int startIndex, int endIndex)
         {
             if (start == null || end == null)
                 throw new ArgumentException("Start component or end component not given");
@@ -72,60 +74,69 @@ namespace FlowSystem.Business
                 (x.EndComponent == end && x.EndComponentIndex == endIndex)))
                 throw new Exception("Can't connect a pipe to the same component twice.");
 
-            FlowNetwork.Pipes.Add(
-                new PipeEntity
-                { 
-                    CurrentFlow = 0,
-                    EndComponent = end,
-                    EndComponentIndex = endIndex,
-                    MaximumFlow = 0,
-                    Path = path.ToList(),
-                    StartComponent = start,
-                    StartComponentIndex = startIndex
-                });
+            var pipe = new PipeEntity
+            {
+                CurrentFlow = 0,
+                EndComponent = end,
+                EndComponentIndex = endIndex,
+                MaximumFlow = 0,
+                Path = path.ToList(),
+                StartComponent = start,
+                StartComponentIndex = startIndex
+            };
+
+            FlowNetwork.Pipes.Add(pipe);
 
             _flowCalculator.UpdateFrom(FlowNetwork, start);
+            return pipe;
         }
 
-        public void AddPump(PointEntity point)
+        public PumpEntity AddPump(PointEntity point)
         {
             if (!PositionFree(point))
                 throw new Exception("Position where component is place is not free.");
 
-            FlowNetwork.Components.Add(
-                new PumpEntity
-                {
-                    FlowOutput = new double[1],
-                    Position = point
-                });
+            var pump = new PumpEntity
+            {
+                FlowOutput = new double[1],
+                Position = point
+            };
+
+            FlowNetwork.Components.Add(pump);
+            return pump;
         }
 
-        public void AddSink(PointEntity point)
+        public SinkEntity AddSink(PointEntity point)
         {
             if (!PositionFree(point))
                 throw new Exception("Position where component is place is not free.");
 
-            FlowNetwork.Components.Add(
-                new SinkEntity
-                {
-                    FlowInput = new double[1],
-                    Position = point
-                });
+            var sink = new SinkEntity
+            {
+                FlowInput = new double[1],
+                Position = point
+            };
+            FlowNetwork.Components.Add(sink);
+
+            return sink;
         }
 
-        public void AddSplitter(PointEntity point)
+        public SplitterEntity AddSplitter(PointEntity point)
         {
             if (!PositionFree(point))
                 throw new Exception("Position where component is place is not free.");
 
-            FlowNetwork.Components.Add(
-                new SplitterEntity
-                {
-                    FlowInput = new double[1],
-                    FlowOutput = new double[2],
-                    Distrubution = 50,
-                    Position = point
-                });
+            var splitter = new SplitterEntity
+            {
+                FlowInput = new double[1],
+                FlowOutput = new double[2],
+                Distrubution = 50,
+                Position = point
+            };
+
+            FlowNetwork.Components.Add(splitter);
+
+            return splitter;
         }
 #endregion
 
