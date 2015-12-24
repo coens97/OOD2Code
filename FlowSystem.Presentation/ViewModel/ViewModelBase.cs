@@ -13,9 +13,8 @@ namespace FlowSystem.Presentation.ViewModel
             {
                 if (property.Equals(value)) return;
             }
-
-            OnPropertyChanged(propertyName);
             property = value;
+            OnPropertyChanged(propertyName);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

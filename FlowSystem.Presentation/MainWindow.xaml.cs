@@ -176,7 +176,7 @@ namespace FlowSystem.Presentation
                     CurrentFlow = pump.CurrentFlow,
                     MaximumFlow = pump.MaximumFlow
                 };
-                pumpViewModel.PropertyChanged += ViewModelChanged;
+                pumpViewModel.PropertyChanged += PumpViewModelChanged;
                 PropertiesSidebar.Content = pumpViewModel;
             }
             else if (splitter != null)
@@ -185,7 +185,7 @@ namespace FlowSystem.Presentation
                 {
                     Devision = splitter.Distrubution
                 };
-                splitterViewModel.PropertyChanged += ViewModelChanged;
+                splitterViewModel.PropertyChanged += SplitterViewModelChanged;
                 PropertiesSidebar.Content = splitterViewModel;
             }
             else
@@ -194,7 +194,7 @@ namespace FlowSystem.Presentation
             }
         }
 
-        private void AddComponentToScreen(IComponentEntityEntity component)
+        private void AddComponentToScreen(IComponentEntity component)
         {
             var mouseDownHandler = new MouseButtonEventHandler(Component_MouseDown);
             var componentControl = new ComponentControl(component, mouseDownHandler);
@@ -255,9 +255,22 @@ namespace FlowSystem.Presentation
         }
         #endregion
 
-        private void ViewModelChanged(object sender, PropertyChangedEventArgs e)
+        private void PumpViewModelChanged(object sender, PropertyChangedEventArgs e)
         {
-            _flowModel.ComponentPropertyChanged(_selectedComponent.Component, e);
+            // The model of the data can be changed here, but since business logic isn't allowed here it is put in the model
+            var viewmodel = sender as PumpViewModel;
+            _flowModel.PumpPropertyChanged(
+                _selectedComponent.Component as PumpEntity, e, 
+                new PumpEntity
+                {
+                    MaximumFlow = viewmodel.MaximumFlow,
+                    CurrentFlow = viewmodel.CurrentFlow
+                });
+        }
+
+        private void SplitterViewModelChanged(object sender, PropertyChangedEventArgs e)
+        {
+            //_flowModel.ComponentPropertyChanged(_selectedComponent.Component, e);
         }
     }
 }

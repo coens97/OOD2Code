@@ -13,6 +13,9 @@ namespace FlowSystem.Business
     {
         private static void ProcessPipequeue(FlowNetworkEntity flowNetwork, Queue<PipeEntity> pipeQueue)
         {
+            if (!pipeQueue.Any())
+                return;
+
             var pipe = pipeQueue.Dequeue();
             while (pipe != null)
             {
@@ -39,7 +42,7 @@ namespace FlowSystem.Business
             ProcessPipequeue(flowNetwork, pipeQueue);
         }
 
-        private static void ProcessComponent(IComponentEntityEntity component)
+        private static void ProcessComponent(IComponentEntity component)
         {
             var merger = component as MergerEntity;
             var splitter = component as SplitterEntity;
@@ -60,7 +63,7 @@ namespace FlowSystem.Business
             }
         }
 
-        public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponentEntityEntity component)
+        public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponentEntity component)
         {
             ProcessComponent(component);
 

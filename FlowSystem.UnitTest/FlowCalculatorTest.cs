@@ -30,7 +30,7 @@ namespace FlowSystem.UnitTest
         {
             _flowNetwork = new FlowNetworkEntity
             {
-                Components = new IComponentEntityEntity[]
+                Components = new IComponentEntity[]
                 {
                     _pump1, _pump2, _merger, _splitter, _sink1, _sink2
                 },

@@ -14,13 +14,13 @@ namespace FlowSystem.Business.Interfaces
         PumpEntity AddPump(PointEntity point);
         SinkEntity AddSink(PointEntity point);
         SplitterEntity AddSplitter(PointEntity point);
-        void DeleteComponent(IComponentEntityEntity component);
+        void DeleteComponent(IComponentEntity component);
         void DeletePipe(PipeEntity pipe);
-        void DuplicateComponent(IComponentEntityEntity component, PointEntity point);
+        void DuplicateComponent(IComponentEntity component, PointEntity point);
         bool FileAlreadyExist(string path);
-        void MoveComponent(IComponentEntityEntity component, PointEntity point);
+        void MoveComponent(IComponentEntity component, PointEntity point);
         void OpenFile(string path);
         void SaveFile(string path);
-        void ComponentPropertyChanged(IComponentEntityEntity component, PropertyChangedEventArgs e);
+        void PumpPropertyChanged(PumpEntity pump, PropertyChangedEventArgs e, PumpEntity newPump);
     }
 }

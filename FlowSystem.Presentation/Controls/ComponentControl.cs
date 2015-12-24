@@ -8,8 +8,8 @@ namespace FlowSystem.Presentation.Controls
 {
     public class ComponentControl : ImageAwesome
     {
-        public IComponentEntityEntity Component { get; set; }
-        public ComponentControl(IComponentEntityEntity component, MouseButtonEventHandler clickEvent)
+        public IComponentEntity Component { get; set; }
+        public ComponentControl(IComponentEntity component, MouseButtonEventHandler clickEvent)
         {
             Width = 32;
             Height = 32;

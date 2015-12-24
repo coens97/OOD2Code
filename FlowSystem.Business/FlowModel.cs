@@ -27,12 +27,12 @@ namespace FlowSystem.Business
 
             FlowNetwork = new FlowNetworkEntity
             {
-                Components = new List<IComponentEntityEntity>(),
+                Components = new List<IComponentEntity>(),
                 Pipes = new List<PipeEntity>()
             };
         }
 
-        private bool PositionFree(PointEntity point, IComponentEntityEntity exclude = null)
+        private bool PositionFree(PointEntity point, IComponentEntity exclude = null)
         {
             return !FlowNetwork.Components.Any(x =>
                 x != exclude &&
@@ -142,7 +142,7 @@ namespace FlowSystem.Business
 #endregion
 
 #region Delete
-        public void DeleteComponent(IComponentEntityEntity component)
+        public void DeleteComponent(IComponentEntity component)
         {
             // get all pipes connected to component
             var pipes = FlowNetwork.Pipes.Where(x =>
@@ -163,14 +163,14 @@ namespace FlowSystem.Business
         #endregion
 
 #region Please hide me
-        public void DuplicateComponent(IComponentEntityEntity component, PointEntity point)
+        public void DuplicateComponent(IComponentEntity component, PointEntity point)
         {
             /// PLEASE IGNORE THIS PIECE OF CODE, duplicating component was a stupid idea, even some crappy utility class is added.
             /// This code is a good example of shitty unmaintainable code which is prone to unexpected bugs
             if (!PositionFree(point))
                 throw new Exception("Position where component is place is not free.");
 
-            IComponentEntityEntity c;
+            IComponentEntity c;
             switch (component.GetType().ToString())
             {
                 case "FlowSystem.Common.Components.MergerEntity":
@@ -198,7 +198,7 @@ namespace FlowSystem.Business
             return _dataAccesLayer.FileAlreadyExist(path);
         }
 
-        public void MoveComponent(IComponentEntityEntity component, PointEntity point)
+        public void MoveComponent(IComponentEntity component, PointEntity point)
         {
             if (!PositionFree(point, component))
                 throw new Exception("Can't overlap components.");
@@ -216,9 +216,44 @@ namespace FlowSystem.Business
             _dataAccesLayer.SaveFile(FlowNetwork, path);
         }
 
-        public void ComponentPropertyChanged(IComponentEntityEntity component, PropertyChangedEventArgs e)
+        public void ComponentPropertyChanged<T>(T component, PropertyChangedEventArgs e, T newValues)
         {
-            throw new NotImplementedException();
+            var pump = component as PumpEntity;
+            var splitter = component as SplitterEntity;
+
+            if (pump != null)
+            {
+                var newPump = newValues as PumpEntity;
+                if (e.PropertyName == "MaximumFlow")
+                    if (newPump != null)
+                        pump.MaximumFlow = newPump.MaximumFlow;
+            }
+            else if (splitter != null)
+            {
+                
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public void PumpPropertyChanged(PumpEntity pump, PropertyChangedEventArgs e, PumpEntity newPump)
+        {
+            switch (e.PropertyName)
+            {
+                case "MaximumFlow":
+                    pump.MaximumFlow = newPump.MaximumFlow;
+                    break;
+                case "CurrentFlow":
+                    if (newPump.CurrentFlow > pump.MaximumFlow)
+                        throw new Exception("The current flow can't be more than the maximum");
+                    pump.CurrentFlow = newPump.CurrentFlow;
+                    //_flowCalculator.UpdateFrom(FlowNetwork, pump);
+                    break;
+                default:
+                    throw new Exception("Can't change the values");
+            }
         }
     }
 }
