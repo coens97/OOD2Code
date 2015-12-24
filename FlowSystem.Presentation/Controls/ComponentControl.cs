@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Controls;
 using System.Windows.Input;
 using FlowSystem.Common.Interfaces;
 using FontAwesome.WPF;
 
-namespace FlowSystem.Presentation
+namespace FlowSystem.Presentation.Controls
 {
     public class ComponentControl : ImageAwesome
     {

@@ -58,6 +58,7 @@
     <Compile Include="FlowDataTest.cs" />
     <Compile Include="FlowModelTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModelTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FlowSystem.Business\FlowSystem.Business.csproj">
@@ -71,6 +72,10 @@
     <ProjectReference Include="..\FlowSystem.Data\FlowSystem.Data.csproj">
       <Project>{2d729e92-872a-4023-8400-9f4b21661bee}</Project>
       <Name>FlowSystem.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FlowSystem.Presentation\FlowSystem.Presentation.csproj">
+      <Project>{6746e7af-0c0e-4963-b9a1-06a09a2dd786}</Project>
+      <Name>FlowSystem.Presentation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

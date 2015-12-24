@@ -75,7 +75,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ComponentControl.cs" />
+    <Compile Include="Controls\ComponentControl.cs" />
+    <Compile Include="Filters\PumpViewModel.cs" />
+    <Compile Include="Filters\ViewModelBase.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
