@@ -255,5 +255,19 @@ namespace FlowSystem.Business
                     throw new Exception("Can't change the values");
             }
         }
+
+        public void SplitterPropertyChanged(SplitterEntity splitter, PropertyChangedEventArgs e, SplitterEntity newSplitter)
+        {
+            switch (e.PropertyName)
+            {
+                case "Distrubution":
+                    if (newSplitter.Distrubution < 0 || newSplitter.Distrubution > 100)
+                        throw new Exception("The distrubution of the splitter has to be between 0 and 100");
+                    splitter.Distrubution = newSplitter.Distrubution;
+                    break;
+                default:
+                    throw new Exception("Can't change the values");
+            }
+        }
     }
 }

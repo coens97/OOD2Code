@@ -2,12 +2,12 @@
 {
     public class SplitterViewModel : ViewModelBase
     {
-        private int _devision;
+        private int _distrubution;
 
-        public int Devision
+        public int Distrubution
         {
-            get { return _devision; }
-            set { SetValue(ref _devision, value); }
+            get { return _distrubution; }
+            set { SetValue(ref _distrubution, value); }
         }
     }
 }

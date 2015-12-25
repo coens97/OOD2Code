@@ -47,7 +47,7 @@
                         <DataTemplate DataType="{x:Type my:SplitterViewModel}">
                             <StackPanel>
                                 <TextBlock Text="Devision:" />
-                                <TextBlock Text="{Binding Devision, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBox Text="{Binding Distrubution, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </DataTemplate>
                     </ContentControl.Resources>

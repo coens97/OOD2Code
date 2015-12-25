@@ -183,7 +183,7 @@ namespace FlowSystem.Presentation
             {
                 var splitterViewModel = new SplitterViewModel
                 {
-                    Devision = splitter.Distrubution
+                    Distrubution = splitter.Distrubution
                 };
                 splitterViewModel.PropertyChanged += SplitterViewModelChanged;
                 PropertiesSidebar.Content = splitterViewModel;
@@ -255,6 +255,7 @@ namespace FlowSystem.Presentation
         }
         #endregion
 
+#region ViewModelsChanged
         private void PumpViewModelChanged(object sender, PropertyChangedEventArgs e)
         {
             // The model of the data can be changed here, but since business logic isn't allowed here it is put in the model
@@ -281,7 +282,25 @@ namespace FlowSystem.Presentation
 
         private void SplitterViewModelChanged(object sender, PropertyChangedEventArgs e)
         {
-            //_flowModel.ComponentPropertyChanged(_selectedComponent.Component, e);
+            // The model of the data can be changed here, but since business logic isn't allowed here it is put in the model
+            var viewmodel = sender as SplitterViewModel;
+            var splitter = _selectedComponent.Component as SplitterEntity;
+
+            try
+            {
+                _flowModel.SplitterPropertyChanged(
+                    splitter, e,
+                    new SplitterEntity
+                    {
+                        Distrubution = viewmodel.Distrubution
+                    });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                viewmodel.Distrubution = splitter.Distrubution;
+            }
         }
+#endregion
     }
 }

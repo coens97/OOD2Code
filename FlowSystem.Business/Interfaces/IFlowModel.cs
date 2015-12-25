@@ -22,5 +22,6 @@ namespace FlowSystem.Business.Interfaces
         void OpenFile(string path);
         void SaveFile(string path);
         void PumpPropertyChanged(PumpEntity pump, PropertyChangedEventArgs e, PumpEntity newPump);
+        void SplitterPropertyChanged(SplitterEntity splitter, PropertyChangedEventArgs e, SplitterEntity newSplitter);
     }
 }
