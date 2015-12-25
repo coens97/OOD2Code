@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using FlowSystem.Common;
 using FlowSystem.Common.Components;
@@ -8,6 +9,7 @@ namespace FlowSystem.Business.Interfaces
 {
     public interface IFlowModel
     {
+        Action FlowNetworkUpdated { get; set; }
         FlowNetworkEntity FlowNetwork { get; set; }
         MergerEntity AddMerger(PointEntity point);
         PipeEntity AddPipe(IFlowOutput start, IFlowInput end, IList<PointEntity> path, int startIndex, int endIndex);

@@ -16,6 +16,7 @@ namespace FlowSystem.Business
         private const int ComponentWidth = 64;
         private const int ComponentHeight = 64;
 
+        public Action FlowNetworkUpdated { get; set; }
         public FlowNetworkEntity FlowNetwork { get; set; }
         private readonly IFlowCalculator _flowCalculator;
         private readonly IDataAccesLayer _dataAccesLayer;
@@ -91,7 +92,7 @@ namespace FlowSystem.Business
 
             FlowNetwork.Pipes.Add(pipe);
 
-            _flowCalculator.UpdateFrom(FlowNetwork, start);
+            _flowCalculator.UpdateFrom(FlowNetwork, start, FlowNetworkUpdated);
             return pipe;
         }
 
@@ -195,7 +196,6 @@ namespace FlowSystem.Business
             FlowNetwork.Components.Add(c);
         }
 #endregion
-
         public bool FileAlreadyExist(string path)
         {
             return _dataAccesLayer.FileAlreadyExist(path);
@@ -231,7 +231,7 @@ namespace FlowSystem.Business
                         throw new Exception("The current flow can't be more than the maximum");
                     pump.CurrentFlow = newPump.CurrentFlow;
                     pump.FlowOutput[0] = pump.CurrentFlow;
-                    _flowCalculator.UpdateFrom(FlowNetwork, pump);
+                    _flowCalculator.UpdateFrom(FlowNetwork, pump, FlowNetworkUpdated);
                     break;
                 default:
                     throw new Exception("Can't change the values");
@@ -246,7 +246,7 @@ namespace FlowSystem.Business
                     if (newSplitter.Distrubution < 0 || newSplitter.Distrubution > 100)
                         throw new Exception("The distrubution of the splitter has to be between 0 and 100");
                     splitter.Distrubution = newSplitter.Distrubution;
-                    _flowCalculator.UpdateFrom(FlowNetwork, splitter);
+                    _flowCalculator.UpdateFrom(FlowNetwork, splitter, FlowNetworkUpdated);
                     break;
                 default:
                     throw new Exception("Can't change the values");

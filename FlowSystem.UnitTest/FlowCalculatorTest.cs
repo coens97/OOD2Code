@@ -57,7 +57,7 @@ namespace FlowSystem.UnitTest
         [TestMethod]
         public void TestCalculation()
         {
-            _flowCalculator.UpdateAll(_flowNetwork);
+            _flowCalculator.UpdateAll(_flowNetwork, null);
 
             Assert.AreEqual(_sink1.FlowInput[0], 7.0);
             Assert.AreEqual(_sink2.FlowInput[0], 3.0);
@@ -66,11 +66,11 @@ namespace FlowSystem.UnitTest
         [TestMethod]
         public void TestCalculationFromComponent()
         {
-            _flowCalculator.UpdateAll(_flowNetwork);
+            _flowCalculator.UpdateAll(_flowNetwork, null);
 
             _pump2.CurrentFlow = 16;
 
-            _flowCalculator.UpdateFrom(_flowNetwork,_pump2);
+            _flowCalculator.UpdateFrom(_flowNetwork,_pump2, null);
 
             Assert.AreEqual(_sink1.FlowInput[0], 14.0);
             Assert.AreEqual(_sink2.FlowInput[0], 6.0);

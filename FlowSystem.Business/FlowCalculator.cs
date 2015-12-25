@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FlowSystem.Business.Interfaces;
@@ -29,17 +30,19 @@ namespace FlowSystem.Business
                 pipe = pipeQueue.Any() ? pipeQueue.Dequeue() : null;
             }
         }
-        public void UpdateAll(FlowNetworkEntity flowNetwork)
+        public void UpdateAll(FlowNetworkEntity flowNetwork, Action done)
         {
             // Get all the pumps and set the flowOutput right
             var pumps = flowNetwork.Components.OfType<PumpEntity>().ToList();
             pumps.ForEach(ProcessComponent);
 
-            // Create a queue of pipes connected to the pumps to it
+            // Create a queue of pipes connectsed to the pumps to it
             var pipeQueue = new Queue<PipeEntity>();
             pipeQueue.EnqueueRange(flowNetwork.Pipes.Where(x => pumps.Contains(x.StartComponent)));
 
             ProcessPipequeue(flowNetwork, pipeQueue);
+
+            done?.Invoke();
         }
 
         private static void ProcessComponent(IComponentEntity component)
@@ -63,13 +66,15 @@ namespace FlowSystem.Business
             }
         }
 
-        public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponentEntity component)
+        public void UpdateFrom(FlowNetworkEntity flowNetwork, IComponentEntity component, Action done)
         {
             ProcessComponent(component);
 
             var pipeQueue = new Queue<PipeEntity>();
             pipeQueue.EnqueueRange(flowNetwork.Pipes.Where(x => x.StartComponent == component));
             ProcessPipequeue(flowNetwork, pipeQueue);
+
+            done?.Invoke();
         }
     }
 

@@ -46,12 +46,13 @@ namespace FlowSystem.Presentation
         private Path _currentPath;
         private bool _ignoreClick = false;
 
-        private Dictionary<PipeEntity, Path> _pipePaths = new Dictionary<PipeEntity, Path>();  
-
+        private Dictionary<Path, PipeEntity> _pipePaths = new Dictionary<Path, PipeEntity>();
+        private Dictionary<Path, PipeEntity>  _overloadedPipes = new Dictionary<Path, PipeEntity>();
         public MainWindow(IFlowModel flowModel)
         {
             Icon = ImageAwesome.CreateImageSource(FontAwesomeIcon.Paw, Brushes.Black);
             _flowModel = flowModel;
+            _flowModel.FlowNetworkUpdated += OnFlowNetworkUpdated;
             InitializeComponent();
             ResetMode();
         }
@@ -342,7 +343,7 @@ namespace FlowSystem.Presentation
 
             if (_selectedPath != null)
             {
-                _selectedPath.Stroke = PipeColor;
+                _selectedPath.Stroke = _overloadedPipes.ContainsKey(_selectedPath) ?  PipeWarningColor :PipeColor;
                 _selectedPath = null;
             }
             PropertiesSidebar.Content = null;
@@ -406,7 +407,7 @@ namespace FlowSystem.Presentation
                                 CreatePathIfDoesntExist();
 
                                 var pipe = _flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
-                                _pipePaths[pipe] = _currentPath;
+                                _pipePaths[_currentPath] = pipe;
 
                                 _pathStart = null;
                                 _pathPoints = null;
@@ -438,12 +439,12 @@ namespace FlowSystem.Presentation
             path.Stroke = PipeSelected;
             _selectedPath = path;
 
-            var pipe = _pipePaths.First(x => x.Value.Equals(path));
+            var pipe = _pipePaths[path];
 
             var pipeViewModel = new PipeViewModel
             {
-                MaximumFlow = pipe.Key.MaximumFlow,
-                CurrentFlow = pipe.Key.CurrentFlow
+                MaximumFlow = pipe.MaximumFlow,
+                CurrentFlow = pipe.CurrentFlow
             };
             
             pipeViewModel.PropertyChanged += PipeViewModelChanged;
@@ -525,9 +526,8 @@ namespace FlowSystem.Presentation
 
             try
             {
-                var pipe = _pipePaths.First(x => x.Value.Equals(_selectedPath)).Key;
                 _flowModel.PipePropertyChanged(
-                    pipe, e,
+                    _pipePaths[_selectedPath], e,
                     new PipeEntity
                     {
                         MaximumFlow = viewmodel.MaximumFlow
@@ -540,5 +540,23 @@ namespace FlowSystem.Presentation
             }
         }
         #endregion
+
+        public void OnFlowNetworkUpdated()
+        {
+            // Reset all pipe colors
+            foreach (var keyValuePair in _pipePaths)
+            {
+                keyValuePair.Key.Stroke = PipeColor;
+            }
+
+            _overloadedPipes = _pipePaths.Where(x =>
+                x.Value.CurrentFlow > x.Value.MaximumFlow)
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            foreach (var keyValuePair in _overloadedPipes)
+            {
+                keyValuePair.Key.Stroke = PipeWarningColor;
+            }
+        }
     }
 }
