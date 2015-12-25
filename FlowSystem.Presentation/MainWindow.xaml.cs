@@ -235,7 +235,29 @@ namespace FlowSystem.Presentation
 
         private PointEntity GetInputOuputPosition(IComponentEntity component, bool input, int nrOfIndex)
         {
-            throw new NotImplementedException();
+            double x, y;
+            if (input)
+            {
+                var inp = component as IFlowInput;
+                if (inp == null)
+                    throw new Exception("Component is not input");
+                x = component.Position.X;
+                y = component.Position.Y + (ComponentHeight/(inp.FlowInput.Length + 1))*(nrOfIndex + 1);
+
+            }
+            else
+            {
+                var outp = component as IFlowOutput;
+                if (outp == null)
+                    throw new Exception("Component is not output");
+                x = component.Position.X + ComponentWidth;
+                y = component.Position.Y + (ComponentHeight / (outp.FlowOutput.Length + 1)) * (nrOfIndex + 1);
+            }
+            return new PointEntity
+            {
+                X = x,
+                Y = y
+            };
         }
 
 #region CanvasMousdownEvents
@@ -333,17 +355,13 @@ namespace FlowSystem.Presentation
                             }
                             else
                             {
-                                var point = new PointEntity
-                                {
-                                    X = start.Position.X,
-                                    Y = start.Position.Y + 16
-                                };
+                                _startIndex = GetMouseInputOutputIndex(mouse, start.FlowOutput.Length);
+                                var point = GetInputOuputPosition(start, false, _startIndex);
 
                                 _pathPoints.Add(point);
 
                                 SetSelectedComponent(component);
                                 _pathStart = start;
-                                _startIndex = GetMouseInputOutputIndex(mouse, start.FlowOutput.Length);
                             }
                         }
                         else
@@ -355,16 +373,12 @@ namespace FlowSystem.Presentation
                             }
                             else
                             {
-                                var point = new PointEntity
-                                {
-                                    X = end.Position.X,
-                                    Y = end.Position.Y + 16
-                                };
+                                var endIndex = GetMouseInputOutputIndex(mouse, end.FlowInput.Length);
+                                var point = GetInputOuputPosition(end, true, endIndex); ;
 
                                 _pathPoints.Add(point);
                                 _currentPath.Data = GetGeometryOfDrawingPath();
-
-                                var endIndex = GetMouseInputOutputIndex(mouse, end.FlowInput.Length);
+                                
                                 var pipe =_flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
                                 _pipePaths[pipe] = _currentPath;
 
