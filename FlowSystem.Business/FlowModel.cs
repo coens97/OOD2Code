@@ -219,28 +219,6 @@ namespace FlowSystem.Business
             _dataAccesLayer.SaveFile(FlowNetwork, path);
         }
 
-        public void ComponentPropertyChanged<T>(T component, PropertyChangedEventArgs e, T newValues)
-        {
-            var pump = component as PumpEntity;
-            var splitter = component as SplitterEntity;
-
-            if (pump != null)
-            {
-                var newPump = newValues as PumpEntity;
-                if (e.PropertyName == "MaximumFlow")
-                    if (newPump != null)
-                        pump.MaximumFlow = newPump.MaximumFlow;
-            }
-            else if (splitter != null)
-            {
-                
-            }
-            else
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-        }
-
         public void PumpPropertyChanged(PumpEntity pump, PropertyChangedEventArgs e, PumpEntity newPump)
         {
             switch (e.PropertyName)
