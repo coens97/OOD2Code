@@ -511,27 +511,36 @@ namespace FlowSystem.Presentation
 
         private void Pipe_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if (_mode != Mode.Mouse) return;
-
             var path = sender as Path;
             if (path == null)
                 throw new Exception("Event is added to wrong component");
-
-            ResetSelected();
-
-            path.Stroke = PipeSelected;
-            _selectedPath = path;
-
             var pipe = _pipePaths[path];
 
-            var pipeViewModel = new PipeViewModel
+            switch (_mode)
             {
-                MaximumFlow = pipe.MaximumFlow,
-                CurrentFlow = pipe.CurrentFlow
-            };
+                case Mode.Mouse:
+                {
+                    ResetSelected();
 
-            pipeViewModel.PropertyChanged += PipeViewModelChanged;
-            PropertiesSidebar.Content = pipeViewModel;
+                    path.Stroke = PipeSelected;
+                    _selectedPath = path;
+
+                    var pipeViewModel = new PipeViewModel
+                    {
+                        MaximumFlow = pipe.MaximumFlow,
+                        CurrentFlow = pipe.CurrentFlow
+                    };
+
+                    pipeViewModel.PropertyChanged += PipeViewModelChanged;
+                    PropertiesSidebar.Content = pipeViewModel;
+                }
+                    break;
+                case Mode.Delete:
+                    _flowModel.DeletePipe(pipe);
+                    CanvasFlow.Children.Remove(path);
+                    _pipePaths.Remove(path);
+                    break;
+            }
         }
 
         #endregion
