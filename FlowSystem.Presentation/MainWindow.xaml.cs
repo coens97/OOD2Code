@@ -136,9 +136,9 @@ namespace FlowSystem.Presentation
 
         private void BtnOpenFile_Click(object sender, RoutedEventArgs e)
         {
-            ResetMode();
             if (!CheckChangesAndAsk())
                 return;
+            ResetAll();
 
             var openFileDialog = new OpenFileDialog();
             if(openFileDialog.ShowDialog() != true)
@@ -148,13 +148,27 @@ namespace FlowSystem.Presentation
 
             _changes = false;
         }
+
+        private void ResetAll()
+        {
+            _flowModel.FlowNetwork = new FlowNetworkEntity
+            {
+                Components = new List<IComponentEntity>(),
+                Pipes = new List<PipeEntity>()
+            }; ;
+            ResetMode();
+            _pipePaths = new Dictionary<Path, PipeEntity>();
+            _overloadedPipes = new Dictionary<Path, PipeEntity>();
+            _changes = false;
+            CanvasFlow.Children.Clear();
+        }
         private void BtnNewFile_Click(object sender, RoutedEventArgs e)
         {
-
+            ResetAll();
         }
         private void BtnClone_Click(object sender, RoutedEventArgs e)
         {
-
+           
         }
 
         private void BtnDelete_Click(object sender, RoutedEventArgs e)
