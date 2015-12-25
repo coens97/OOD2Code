@@ -55,6 +55,7 @@
             </GroupBox>
         </Grid>
         <Canvas x:Name="CanvasFlow" Margin="158,21,10,10" Background="White" MouseDown="Canvas_MouseDown" RenderTransformOrigin="0,0">
+            
         </Canvas>
     </Grid>
 </Window>

@@ -13,6 +13,7 @@ using FlowSystem.Presentation.ViewModel;
 using FontAwesome.WPF;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.Windows.Shapes;
 using FlowSystem.Common.Interfaces;
 
 namespace FlowSystem.Presentation
@@ -30,6 +31,10 @@ namespace FlowSystem.Presentation
         private bool _changes = false;
         private Mode _mode = Mode.Mouse;
         private ComponentControl _selectedComponent;
+
+        private IFlowOutput _pathStart;
+        private List<PointEntity> _pathPoints;
+        private Path _currentPath;
 
         public MainWindow(IFlowModel flowModel)
         {
@@ -77,6 +82,9 @@ namespace FlowSystem.Presentation
             ResetButtons();
             _mode = Mode.Draw;
             BtnDraw.Background = _buttonActiveColor;
+
+            _pathStart = null;
+            _pathPoints = new List<PointEntity>();
         }
 
         private void BtnMerger_Click(object sender, RoutedEventArgs e)
@@ -150,11 +158,13 @@ namespace FlowSystem.Presentation
             Save(true);
         }
         #endregion
-
         private void SetSelectedComponent(ComponentControl component)
         {
             if (_selectedComponent != null)
                 _selectedComponent.Style = null;
+
+            if (component == null)
+                return;
 
             var style = new Style
             {
@@ -221,8 +231,18 @@ namespace FlowSystem.Presentation
                         AddComponentToScreen(_flowModel.AddPump(point));
                         break;
                     case Mode.Draw:
-
-                        _changes = true;
+                        if (_pathStart != null)
+                        {
+                            var path = new Path
+                            {
+                                Stroke = Brushes.Black,
+                                StrokeThickness = 3,
+                                Data = Geometry.Parse(
+                                    $"M{_pathStart.Position.X},{_pathStart.Position.Y} L{point.X},{point.Y}")
+                            };
+                            CanvasFlow.Children.Add(path);
+                            return; // Skip the ResetMode();
+                        }
                         break;
                     case Mode.Sink:
                         AddComponentToScreen(_flowModel.AddSink(point));
@@ -243,16 +263,41 @@ namespace FlowSystem.Presentation
 
         private void Component_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            // Components are only selectable when in mouse mode
-            if (_mode != Mode.Mouse)
-                return;
-
             var component = sender as ComponentControl;
             if (component == null)
                 throw new Exception("Something went wrong, pleasee try again.");
-
-            SetSelectedComponent(component);            
+            // Components are only selectable when in mouse mode
+            switch (_mode)
+            {
+                case Mode.Mouse:
+                    SetSelectedComponent(component);
+                    break;
+                case Mode.Draw:
+                    if (_pathStart == null)
+                    {
+                        var start = component.Component as IFlowOutput;
+                        if (start == null)
+                        {
+                            MessageBox.Show("Please select a component with an output");
+                        }
+                        else
+                        {
+                            _pathStart = start;
+                            _pathPoints.Add(new PointEntity
+                            {
+                                X = start.Position.X + 32,
+                                Y = start.Position.Y + 16
+                            });
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please select empty grid");
+                    }
+                    break;
+            }
         }
+
         #endregion
 
 #region ViewModelsChanged
@@ -271,6 +316,7 @@ namespace FlowSystem.Presentation
                         MaximumFlow = viewmodel.MaximumFlow,
                         CurrentFlow = viewmodel.CurrentFlow
                     });
+                _changes = true;
             }
             catch (Exception ex)
             {
@@ -294,6 +340,7 @@ namespace FlowSystem.Presentation
                     {
                         Distrubution = viewmodel.Distrubution
                     });
+                _changes = true;
             }
             catch (Exception ex)
             {
