@@ -259,6 +259,7 @@ namespace FlowSystem.Business
             {
                 case "MaximumFlow":
                     pipe.MaximumFlow = newPipe.MaximumFlow;
+                    FlowNetworkUpdated?.Invoke();
                     break;
                 default:
                     throw new Exception("Can't change the values");
