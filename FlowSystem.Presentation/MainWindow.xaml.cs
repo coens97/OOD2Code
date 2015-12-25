@@ -140,13 +140,28 @@ namespace FlowSystem.Presentation
                 return;
             ResetAll();
 
-            var openFileDialog = new OpenFileDialog();
+            var openFileDialog = new OpenFileDialog {Filter = "Flow file (*.flow)|*.flow" };
             if(openFileDialog.ShowDialog() != true)
                 return;
             
             _flowModel.OpenFile(openFileDialog.FileName);
 
+            ShowNetwork();
             _changes = false;
+        }
+
+        private void ShowNetwork()
+        {
+            foreach (var componentEntity in _flowModel.FlowNetwork.Components)
+            {
+                AddComponentToScreen(componentEntity);
+            }
+
+            foreach (var pipeEntity in _flowModel.FlowNetwork.Pipes)
+            {
+                _pipePaths[CreatePath(pipeEntity.Path)] = pipeEntity;
+            }
+            OnFlowNetworkUpdated();
         }
 
         private void ResetAll()
@@ -164,6 +179,8 @@ namespace FlowSystem.Presentation
         }
         private void BtnNewFile_Click(object sender, RoutedEventArgs e)
         {
+            if (!CheckChangesAndAsk())
+                return;
             ResetAll();
         }
         private void BtnClone_Click(object sender, RoutedEventArgs e)
@@ -180,7 +197,7 @@ namespace FlowSystem.Presentation
         {
             ResetMode();
 
-            var saveFileDialog = new SaveFileDialog();
+            var saveFileDialog = new SaveFileDialog {Filter = "Flow file (*.flow)|*.flow"};
             if (saveFileDialog.ShowDialog() != true)
                 return;
 
@@ -293,21 +310,27 @@ namespace FlowSystem.Presentation
         {
             if (_currentPath == null)
             {
-                _currentPath = new Path
-                {
-                    Stroke = PipeColor,
-                    StrokeThickness = 6,
-                    Data = GetGeometryOfDrawingPath()
-                };
-
-                _currentPath.MouseDown += Pipe_MouseDown;
-
-                CanvasFlow.Children.Add(_currentPath);
+                _currentPath = CreatePath(_pathPoints);
             }
             else
             {
-                _currentPath.Data = GetGeometryOfDrawingPath();
+                _currentPath.Data = GetGeometryOfDrawingPath(_pathPoints);
             }
+        }
+
+        private Path CreatePath(List<PointEntity> points)
+        {
+            var path = new Path
+            {
+                Stroke = PipeColor,
+                StrokeThickness = 6,
+                Data = GetGeometryOfDrawingPath(points)
+            };
+
+            path.MouseDown += Pipe_MouseDown;
+
+            CanvasFlow.Children.Add(path);
+            return path;
         }
 
 #region CanvasMousdownEvents
@@ -480,10 +503,10 @@ namespace FlowSystem.Presentation
 
         #endregion
 
-        private Geometry GetGeometryOfDrawingPath()
+        private Geometry GetGeometryOfDrawingPath(List<PointEntity> pipe)
         {
             var first = true;
-            var p = _pathPoints.Select(x =>
+            var p = pipe.Select(x =>
             {
                 if (first)
                 {
