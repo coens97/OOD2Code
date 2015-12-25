@@ -252,7 +252,8 @@ namespace FlowSystem.Business
                     if (newPump.CurrentFlow > pump.MaximumFlow)
                         throw new Exception("The current flow can't be more than the maximum");
                     pump.CurrentFlow = newPump.CurrentFlow;
-                    //_flowCalculator.UpdateFrom(FlowNetwork, pump);
+                    pump.FlowOutput[0] = pump.CurrentFlow;
+                    _flowCalculator.UpdateFrom(FlowNetwork, pump);
                     break;
                 default:
                     throw new Exception("Can't change the values");
