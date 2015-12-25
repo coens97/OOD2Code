@@ -26,6 +26,10 @@ namespace FlowSystem.Presentation
     {
         private static readonly Brush ButtonColor = Brushes.LightGray;
         private static readonly Brush ButtonActiveColor = Brushes.White;
+        private static readonly Brush PipeColor = Brushes.Black;
+        private static readonly Brush PipeWarningColor = Brushes.Red;
+        private static readonly Brush PipeSelected = Brushes.DarkGray;
+
         private static readonly int ComponentHeight = 32;
         private static readonly int ComponentWidth = 32;
 
@@ -34,6 +38,7 @@ namespace FlowSystem.Presentation
         private bool _changes = false;
         private Mode _mode = Mode.Mouse;
         private ComponentControl _selectedComponent;
+        private Path _selectedPath;
 
         private IFlowOutput _pathStart;
         private int _startIndex;
@@ -173,11 +178,7 @@ namespace FlowSystem.Presentation
         #endregion
         private void SetSelectedComponent(ComponentControl component)
         {
-            if (_selectedComponent != null)
-                _selectedComponent.Style = null;
-
-            if (component == null)
-                return;
+            ResetSelected();
 
             var style = new Style
             {
@@ -266,10 +267,13 @@ namespace FlowSystem.Presentation
             {
                 _currentPath = new Path
                 {
-                    Stroke = Brushes.Black,
-                    StrokeThickness = 3,
+                    Stroke = PipeColor,
+                    StrokeThickness = 6,
                     Data = GetGeometryOfDrawingPath()
                 };
+
+                _currentPath.MouseDown += Pipe_MouseDown;
+
                 CanvasFlow.Children.Add(_currentPath);
             }
             else
@@ -328,6 +332,22 @@ namespace FlowSystem.Presentation
             }
         }
 
+        private void ResetSelected()
+        {
+            if (_selectedComponent != null)
+            {
+                _selectedComponent.Style = null;
+                _selectedComponent = null;
+            }
+
+            if (_selectedPath != null)
+            {
+                _selectedPath.Stroke = PipeColor;
+                _selectedPath = null;
+            }
+            PropertiesSidebar.Content = null;
+        }
+
         private void Component_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             var component = sender as ComponentControl;
@@ -379,12 +399,13 @@ namespace FlowSystem.Presentation
                             else
                             {
                                 var endIndex = GetMouseInputOutputIndex(mouse, end.FlowInput.Length);
-                                var point = GetInputOuputPosition(end, true, endIndex); ;
+                                var point = GetInputOuputPosition(end, true, endIndex);
+                                ;
 
                                 _pathPoints.Add(point);
                                 CreatePathIfDoesntExist();
 
-                                var pipe =_flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
+                                var pipe = _flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
                                 _pipePaths[pipe] = _currentPath;
 
                                 _pathStart = null;
@@ -402,6 +423,20 @@ namespace FlowSystem.Presentation
                 MessageBox.Show(ex.Message);
                 throw ex;
             }
+        }
+
+        private void Pipe_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_mode != Mode.Mouse) return;
+
+            var path = sender as Path;
+            if (path == null)
+                throw new Exception("Event is added to wrong component");
+
+            ResetSelected();
+
+            path.Stroke = PipeSelected;
+            _selectedPath = path;
         }
 
         #endregion
