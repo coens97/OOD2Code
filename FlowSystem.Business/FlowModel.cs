@@ -268,6 +268,7 @@ namespace FlowSystem.Business
                     if (newSplitter.Distrubution < 0 || newSplitter.Distrubution > 100)
                         throw new Exception("The distrubution of the splitter has to be between 0 and 100");
                     splitter.Distrubution = newSplitter.Distrubution;
+                    _flowCalculator.UpdateFrom(FlowNetwork, splitter);
                     break;
                 default:
                     throw new Exception("Can't change the values");
