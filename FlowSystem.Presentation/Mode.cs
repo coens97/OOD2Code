@@ -7,6 +7,8 @@
         Sink,
         Pump,
         Merger,
-        Splitter
+        Splitter,
+        Clone,
+        Delete
     }
 }

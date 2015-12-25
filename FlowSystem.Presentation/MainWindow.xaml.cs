@@ -67,7 +67,7 @@ namespace FlowSystem.Presentation
 
         private void ResetButtons()
         {
-            var buttons = new [] {BtnMouse, BtnDraw, BtnMerger, BtnPump, BtnSink, BtnSplitter};
+            var buttons = new [] {BtnMouse, BtnDraw, BtnMerger, BtnPump, BtnSink, BtnSplitter, BtnClone, BtnDelete};
             foreach (var button in buttons)
             {
                 button.Background = ButtonColor;
@@ -187,12 +187,16 @@ namespace FlowSystem.Presentation
         }
         private void BtnClone_Click(object sender, RoutedEventArgs e)
         {
-           
+            ResetButtons();
+            _mode = Mode.Clone;
+            BtnClone.Background = ButtonActiveColor;
         }
 
         private void BtnDelete_Click(object sender, RoutedEventArgs e)
         {
-
+            ResetButtons();
+            _mode = Mode.Delete;
+            BtnDelete.Background = ButtonActiveColor;
         }
 
         private void Save(bool saveAs)
@@ -355,7 +359,8 @@ namespace FlowSystem.Presentation
                 switch (_mode)
                 {
                     case Mode.Mouse:
-
+                    case Mode.Clone:
+                    case Mode.Delete:
                         break;
                     case Mode.Merger:
                         AddComponentToScreen(_flowModel.AddMerger(point));
@@ -472,6 +477,11 @@ namespace FlowSystem.Presentation
                                 SetSelectedComponent(component);
                             }
                         }
+                        break;
+                        case Mode.Delete:
+                            _flowModel.DeleteComponent(component.Component);
+                            CanvasFlow.Children.Remove(component);
+                            ResetMode();
                         break;
                 }
             }
