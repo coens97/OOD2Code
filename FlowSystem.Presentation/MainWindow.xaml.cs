@@ -437,6 +437,17 @@ namespace FlowSystem.Presentation
 
             path.Stroke = PipeSelected;
             _selectedPath = path;
+
+            var pipe = _pipePaths.First(x => x.Value.Equals(path));
+
+            var pipeViewModel = new PipeViewModel
+            {
+                MaximumFlow = pipe.Key.MaximumFlow,
+                CurrentFlow = pipe.Key.CurrentFlow
+            };
+            
+            pipeViewModel.PropertyChanged += PipeViewModelChanged;
+            PropertiesSidebar.Content = pipeViewModel;
         }
 
         #endregion
@@ -506,6 +517,28 @@ namespace FlowSystem.Presentation
                 viewmodel.Distrubution = splitter.Distrubution;
             }
         }
-#endregion
+
+        private void PipeViewModelChanged(object sender, PropertyChangedEventArgs e)
+        {
+            // The model of the data can be changed here, but since business logic isn't allowed here it is put in the model
+            var viewmodel = sender as PipeViewModel;
+
+            try
+            {
+                var pipe = _pipePaths.First(x => x.Value.Equals(_selectedPath)).Key;
+                _flowModel.PipePropertyChanged(
+                    pipe, e,
+                    new PipeEntity
+                    {
+                        MaximumFlow = viewmodel.MaximumFlow
+                    });
+                _changes = true;
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        #endregion
     }
 }

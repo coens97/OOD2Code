@@ -34,6 +34,8 @@
                             <StackPanel>
                                 <TextBlock Text="Maximum flow:" />
                                 <TextBox Text="{Binding MaximumFlow , UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="Current flow:" />
+                                <TextBlock Text="{Binding CurrentFlow}" />
                             </StackPanel>
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type my:PumpViewModel}">

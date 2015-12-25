@@ -272,5 +272,17 @@ namespace FlowSystem.Business
                     throw new Exception("Can't change the values");
             }
         }
+
+        public void PipePropertyChanged(PipeEntity pipe, PropertyChangedEventArgs e, PipeEntity newPipe)
+        {
+            switch (e.PropertyName)
+            {
+                case "MaximumFlow":
+                    pipe.MaximumFlow = newPipe.MaximumFlow;
+                    break;
+                default:
+                    throw new Exception("Can't change the values");
+            }
+        }
     }
 }
