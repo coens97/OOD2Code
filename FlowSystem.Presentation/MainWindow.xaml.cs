@@ -260,6 +260,24 @@ namespace FlowSystem.Presentation
             };
         }
 
+        private void CreatePathIfDoesntExist()
+        {
+            if (_currentPath == null)
+            {
+                _currentPath = new Path
+                {
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 3,
+                    Data = GetGeometryOfDrawingPath()
+                };
+                CanvasFlow.Children.Add(_currentPath);
+            }
+            else
+            {
+                _currentPath.Data = GetGeometryOfDrawingPath();
+            }
+        }
+
 #region CanvasMousdownEvents
         private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -289,20 +307,7 @@ namespace FlowSystem.Presentation
                         {
                             _pathPoints.Add(point);
 
-                            if (_currentPath == null)
-                            {
-                                _currentPath = new Path
-                                {
-                                    Stroke = Brushes.Black,
-                                    StrokeThickness = 3,
-                                    Data = GetGeometryOfDrawingPath()
-                                };
-                                CanvasFlow.Children.Add(_currentPath);
-                            }
-                            else
-                            {
-                                _currentPath.Data = GetGeometryOfDrawingPath();
-                            }
+                            CreatePathIfDoesntExist();
                             return; // Skip the ResetMode();
                         }
                         break;
@@ -377,8 +382,8 @@ namespace FlowSystem.Presentation
                                 var point = GetInputOuputPosition(end, true, endIndex); ;
 
                                 _pathPoints.Add(point);
-                                _currentPath.Data = GetGeometryOfDrawingPath();
-                                
+                                CreatePathIfDoesntExist();
+
                                 var pipe =_flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
                                 _pipePaths[pipe] = _currentPath;
 
@@ -386,14 +391,16 @@ namespace FlowSystem.Presentation
                                 _pathPoints = null;
                                 _currentPath = null;
                                 ResetMode();
+                                SetSelectedComponent(component);
                             }
                         }
                         break;
                 }
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 MessageBox.Show(ex.Message);
+                throw ex;
             }
         }
 
