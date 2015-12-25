@@ -473,10 +473,11 @@ namespace FlowSystem.Presentation
                                 var point = GetInputOuputPosition(end, true, endIndex);
                                 
                                 _pathPoints.Add(point);
-                                CreatePathIfDoesntExist();
 
+                                CreatePathIfDoesntExist();
                                 var pipe = _flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
                                 _pipePaths[_currentPath] = pipe;
+                                OnFlowNetworkUpdated();
 
                                 _pathStart = null;
                                 _pathPoints = null;
