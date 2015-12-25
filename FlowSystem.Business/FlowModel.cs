@@ -167,7 +167,7 @@ namespace FlowSystem.Business
         #endregion
 
 #region Please hide me
-        public void DuplicateComponent(IComponentEntity component, PointEntity point)
+        public IComponentEntity DuplicateComponent(IComponentEntity component, PointEntity point)
         {
             /// PLEASE IGNORE THIS PIECE OF CODE, duplicating component was a stupid idea, even some crappy utility class is added.
             /// This code is a good example of shitty unmaintainable code which is prone to unexpected bugs
@@ -194,6 +194,7 @@ namespace FlowSystem.Business
             }
             c.Position = point;
             FlowNetwork.Components.Add(c);
+            return c;
         }
 #endregion
         public void MoveComponent(IComponentEntity component, PointEntity point)

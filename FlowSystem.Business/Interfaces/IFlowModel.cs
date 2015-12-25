@@ -18,7 +18,7 @@ namespace FlowSystem.Business.Interfaces
         SplitterEntity AddSplitter(PointEntity point);
         void DeleteComponent(IComponentEntity component);
         void DeletePipe(PipeEntity pipe);
-        void DuplicateComponent(IComponentEntity component, PointEntity point);
+        IComponentEntity DuplicateComponent(IComponentEntity component, PointEntity point);
         void MoveComponent(IComponentEntity component, PointEntity point);
         void OpenFile(string path);
         void SaveFile(string path);

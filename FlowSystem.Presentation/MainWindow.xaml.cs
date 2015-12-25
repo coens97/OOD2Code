@@ -46,9 +46,10 @@ namespace FlowSystem.Presentation
         private Path _currentPath;
         private bool _ignoreClick = false;
         private string _path = string.Empty;
+        private IComponentEntity _clone;
 
         private Dictionary<Path, PipeEntity> _pipePaths = new Dictionary<Path, PipeEntity>();
-        private Dictionary<Path, PipeEntity>  _overloadedPipes = new Dictionary<Path, PipeEntity>();
+        private Dictionary<Path, PipeEntity> _overloadedPipes = new Dictionary<Path, PipeEntity>();
         public MainWindow(IFlowModel flowModel)
         {
             Icon = ImageAwesome.CreateImageSource(FontAwesomeIcon.Paw, Brushes.Black);
@@ -63,11 +64,12 @@ namespace FlowSystem.Presentation
             ResetButtons();
             _mode = Mode.Mouse;
             BtnMouse.Background = ButtonActiveColor;
+            _clone = null;
         }
 
         private void ResetButtons()
         {
-            var buttons = new [] {BtnMouse, BtnDraw, BtnMerger, BtnPump, BtnSink, BtnSplitter, BtnClone, BtnDelete};
+            var buttons = new[] { BtnMouse, BtnDraw, BtnMerger, BtnPump, BtnSink, BtnSplitter, BtnClone, BtnDelete };
             foreach (var button in buttons)
             {
                 button.Background = ButtonColor;
@@ -89,7 +91,7 @@ namespace FlowSystem.Presentation
                        MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
 
-#region ButtonEvents
+        #region ButtonEvents
         private void BtnMouse_Click(object sender, RoutedEventArgs e)
         {
             ResetButtons();
@@ -141,8 +143,8 @@ namespace FlowSystem.Presentation
                 return;
             ResetAll();
 
-            var openFileDialog = new OpenFileDialog {Filter = "Flow file (*.flow)|*.flow" };
-            if(openFileDialog.ShowDialog() != true)
+            var openFileDialog = new OpenFileDialog { Filter = "Flow file (*.flow)|*.flow" };
+            if (openFileDialog.ShowDialog() != true)
                 return;
 
             _path = openFileDialog.FileName;
@@ -210,7 +212,7 @@ namespace FlowSystem.Presentation
             }
             else
             {
-                var saveFileDialog = new SaveFileDialog {Filter = "Flow file (*.flow)|*.flow"};
+                var saveFileDialog = new SaveFileDialog { Filter = "Flow file (*.flow)|*.flow" };
                 if (saveFileDialog.ShowDialog() != true)
                     return;
                 path = saveFileDialog.FileName;
@@ -286,7 +288,7 @@ namespace FlowSystem.Presentation
         {
             if (nrOfIndex == 1)
                 return 0;
-            return (int)(mouse.Y / (ComponentHeight/nrOfIndex));
+            return (int)(mouse.Y / (ComponentHeight / nrOfIndex));
         }
 
         private PointEntity GetInputOuputPosition(IComponentEntity component, bool input, int nrOfIndex)
@@ -298,7 +300,7 @@ namespace FlowSystem.Presentation
                 if (inp == null)
                     throw new Exception("Component is not input");
                 x = component.Position.X;
-                y = component.Position.Y + (ComponentHeight/(inp.FlowInput.Length + 1))*(nrOfIndex + 1);
+                y = component.Position.Y + (ComponentHeight / (inp.FlowInput.Length + 1)) * (nrOfIndex + 1);
 
             }
             else
@@ -343,7 +345,7 @@ namespace FlowSystem.Presentation
             return path;
         }
 
-#region CanvasMousdownEvents
+        #region CanvasMousdownEvents
         private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (_ignoreClick) // If mousedown is triggered on component this event doesn't need to be triggered
@@ -353,13 +355,12 @@ namespace FlowSystem.Presentation
             }
 
             var p = e.GetPosition(CanvasFlow);
-            var point = new PointEntity {X = p.X, Y = p.Y};
+            var point = new PointEntity { X = p.X, Y = p.Y };
             try
             {
                 switch (_mode)
                 {
                     case Mode.Mouse:
-                    case Mode.Clone:
                     case Mode.Delete:
                         break;
                     case Mode.Merger:
@@ -383,6 +384,14 @@ namespace FlowSystem.Presentation
                     case Mode.Splitter:
                         AddComponentToScreen(_flowModel.AddSplitter(point));
                         break;
+                    case Mode.Clone:
+                        if (_clone != null)
+                        {
+                            var duplicate =_flowModel.DuplicateComponent(_clone, point);
+                            AddComponentToScreen(duplicate);
+                            _clone = null;
+                        }
+                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -404,7 +413,7 @@ namespace FlowSystem.Presentation
 
             if (_selectedPath != null)
             {
-                _selectedPath.Stroke = _overloadedPipes.ContainsKey(_selectedPath) ?  PipeWarningColor :PipeColor;
+                _selectedPath.Stroke = _overloadedPipes.ContainsKey(_selectedPath) ? PipeWarningColor : PipeColor;
                 _selectedPath = null;
             }
             PropertiesSidebar.Content = null;
@@ -462,8 +471,7 @@ namespace FlowSystem.Presentation
                             {
                                 var endIndex = GetMouseInputOutputIndex(mouse, end.FlowInput.Length);
                                 var point = GetInputOuputPosition(end, true, endIndex);
-                                ;
-
+                                
                                 _pathPoints.Add(point);
                                 CreatePathIfDoesntExist();
 
@@ -478,17 +486,25 @@ namespace FlowSystem.Presentation
                             }
                         }
                         break;
-                        case Mode.Delete:
-                            _flowModel.DeleteComponent(component.Component);
-                            CanvasFlow.Children.Remove(component);
-                            ResetMode();
+                    case Mode.Delete:
+                        _flowModel.DeleteComponent(component.Component);
+                        CanvasFlow.Children.Remove(component);
+                        ResetMode();
                         break;
+                    case Mode.Clone:  
+                        if (_clone == null)
+                        {
+                            _ignoreClick = true;
+                            SetSelectedComponent(component);
+                            _clone = component.Component;
+                        }
+                        break;
+
                 }
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                throw ex;
             }
         }
 
@@ -512,7 +528,7 @@ namespace FlowSystem.Presentation
                 MaximumFlow = pipe.MaximumFlow,
                 CurrentFlow = pipe.CurrentFlow
             };
-            
+
             pipeViewModel.PropertyChanged += PipeViewModelChanged;
             PropertiesSidebar.Content = pipeViewModel;
         }
@@ -536,13 +552,13 @@ namespace FlowSystem.Presentation
             });
             return Geometry.Parse(string.Join(" ", p));
         }
-#region ViewModelsChanged
+        #region ViewModelsChanged
         private void PumpViewModelChanged(object sender, PropertyChangedEventArgs e)
         {
             // The model of the data can be changed here, but since business logic isn't allowed here it is put in the model
             var viewmodel = sender as PumpViewModel;
             var pump = _selectedComponent.Component as PumpEntity;
-            
+
             try
             {
                 _flowModel.PumpPropertyChanged(
