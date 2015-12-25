@@ -232,6 +232,12 @@ namespace FlowSystem.Presentation
                 return 0;
             return (int)(mouse.Y / (ComponentHeight/nrOfIndex));
         }
+
+        private PointEntity GetInputOuputPosition(IComponentEntity component, bool input, int nrOfIndex)
+        {
+            throw new NotImplementedException();
+        }
+
 #region CanvasMousdownEvents
         private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -327,6 +333,14 @@ namespace FlowSystem.Presentation
                             }
                             else
                             {
+                                var point = new PointEntity
+                                {
+                                    X = start.Position.X,
+                                    Y = start.Position.Y + 16
+                                };
+
+                                _pathPoints.Add(point);
+
                                 SetSelectedComponent(component);
                                 _pathStart = start;
                                 _startIndex = GetMouseInputOutputIndex(mouse, start.FlowOutput.Length);
@@ -356,7 +370,6 @@ namespace FlowSystem.Presentation
 
                                 _pathStart = null;
                                 _pathPoints = null;
-                                // CanvasFlow.Children.Remove(_currentPath);
                                 _currentPath = null;
                                 ResetMode();
                             }
@@ -374,10 +387,20 @@ namespace FlowSystem.Presentation
 
         private Geometry GetGeometryOfDrawingPath()
         {
-            var geometryString = $"M{_pathStart.Position.X},{_pathStart.Position.Y} ";
-            var p = _pathPoints.Select(x => $"L{x.X},{x.Y}");
-            geometryString += string.Join(" ", p);
-            return Geometry.Parse(geometryString);
+            var first = true;
+            var p = _pathPoints.Select(x =>
+            {
+                if (first)
+                {
+                    first = false;
+                    return $"M{x.X},{x.Y}";
+                }
+                else
+                {
+                    return $"L{x.X},{x.Y}";
+                }
+            });
+            return Geometry.Parse(string.Join(" ", p));
         }
 #region ViewModelsChanged
         private void PumpViewModelChanged(object sender, PropertyChangedEventArgs e)
