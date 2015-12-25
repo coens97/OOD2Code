@@ -10,11 +10,6 @@ namespace FlowSystem.Data
 {
     public class DataAccesLayer : IDataAccesLayer
     {
-        public bool FileAlreadyExist(string path)
-        {
-            return File.Exists(path);
-        }
-
         public FlowNetworkEntity OpenFile(string path)
         {
             FlowFile flowFile;

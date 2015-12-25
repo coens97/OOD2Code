@@ -45,6 +45,7 @@ namespace FlowSystem.Presentation
         private List<PointEntity> _pathPoints;
         private Path _currentPath;
         private bool _ignoreClick = false;
+        private string _path = string.Empty;
 
         private Dictionary<Path, PipeEntity> _pipePaths = new Dictionary<Path, PipeEntity>();
         private Dictionary<Path, PipeEntity>  _overloadedPipes = new Dictionary<Path, PipeEntity>();
@@ -143,7 +144,8 @@ namespace FlowSystem.Presentation
             var openFileDialog = new OpenFileDialog {Filter = "Flow file (*.flow)|*.flow" };
             if(openFileDialog.ShowDialog() != true)
                 return;
-            
+
+            _path = openFileDialog.FileName;
             _flowModel.OpenFile(openFileDialog.FileName);
 
             ShowNetwork();
@@ -193,20 +195,24 @@ namespace FlowSystem.Presentation
 
         }
 
-        private void Save(bool overwrite)
+        private void Save(bool saveAs)
         {
             ResetMode();
 
-            var saveFileDialog = new SaveFileDialog {Filter = "Flow file (*.flow)|*.flow"};
-            if (saveFileDialog.ShowDialog() != true)
-                return;
-
-            if (_flowModel.FileAlreadyExist(saveFileDialog.FileName)
-                && !overwrite
-                && MessageBox.Show("The file already excist, do you want to overwrite?", "Flow system", MessageBoxButton.YesNo) == MessageBoxResult.No)
-                return;
-
-            _flowModel.SaveFile(saveFileDialog.FileName);
+            string path;
+            if (!saveAs && _path != string.Empty)
+            {
+                path = _path;
+            }
+            else
+            {
+                var saveFileDialog = new SaveFileDialog {Filter = "Flow file (*.flow)|*.flow"};
+                if (saveFileDialog.ShowDialog() != true)
+                    return;
+                path = saveFileDialog.FileName;
+            }
+            _flowModel.SaveFile(path);
+            _path = path;
 
             _changes = false;
         }

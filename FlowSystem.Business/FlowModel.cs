@@ -196,11 +196,6 @@ namespace FlowSystem.Business
             FlowNetwork.Components.Add(c);
         }
 #endregion
-        public bool FileAlreadyExist(string path)
-        {
-            return _dataAccesLayer.FileAlreadyExist(path);
-        }
-
         public void MoveComponent(IComponentEntity component, PointEntity point)
         {
             if (!PositionFree(point, component))

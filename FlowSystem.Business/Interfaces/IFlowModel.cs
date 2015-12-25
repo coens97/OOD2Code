@@ -19,7 +19,6 @@ namespace FlowSystem.Business.Interfaces
         void DeleteComponent(IComponentEntity component);
         void DeletePipe(PipeEntity pipe);
         void DuplicateComponent(IComponentEntity component, PointEntity point);
-        bool FileAlreadyExist(string path);
         void MoveComponent(IComponentEntity component, PointEntity point);
         void OpenFile(string path);
         void SaveFile(string path);
