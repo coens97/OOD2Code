@@ -13,6 +13,7 @@ using FlowSystem.Presentation.ViewModel;
 using FontAwesome.WPF;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Shapes;
 using FlowSystem.Common.Interfaces;
 
@@ -35,6 +36,7 @@ namespace FlowSystem.Presentation
         private IFlowOutput _pathStart;
         private List<PointEntity> _pathPoints;
         private Path _currentPath;
+        private bool _ignoreClick = false;
 
         public MainWindow(IFlowModel flowModel)
         {
@@ -215,6 +217,12 @@ namespace FlowSystem.Presentation
 #region CanvasMousdownEvents
         private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (_ignoreClick) // If mousedown is triggered on component this event doesn't need to be triggered
+            {
+                _ignoreClick = false;
+                return;
+            }
+
             var p = e.GetPosition(CanvasFlow);
             var point = new PointEntity {X = p.X, Y = p.Y};
             try
@@ -233,14 +241,22 @@ namespace FlowSystem.Presentation
                     case Mode.Draw:
                         if (_pathStart != null)
                         {
-                            var path = new Path
+                            _pathPoints.Add(point);
+
+                            if (_currentPath == null)
                             {
-                                Stroke = Brushes.Black,
-                                StrokeThickness = 3,
-                                Data = Geometry.Parse(
-                                    $"M{_pathStart.Position.X},{_pathStart.Position.Y} L{point.X},{point.Y}")
-                            };
-                            CanvasFlow.Children.Add(path);
+                                _currentPath = new Path
+                                {
+                                    Stroke = Brushes.Black,
+                                    StrokeThickness = 3,
+                                    Data = GetGeometryOfDrawingPath()
+                                };
+                                CanvasFlow.Children.Add(_currentPath);
+                            }
+                            else
+                            {
+                                _currentPath.Data = GetGeometryOfDrawingPath();
+                            }
                             return; // Skip the ResetMode();
                         }
                         break;
@@ -283,23 +299,26 @@ namespace FlowSystem.Presentation
                         else
                         {
                             _pathStart = start;
-                            _pathPoints.Add(new PointEntity
-                            {
-                                X = start.Position.X + 32,
-                                Y = start.Position.Y + 16
-                            });
                         }
                     }
                     else
                     {
                         MessageBox.Show("Please select empty grid");
                     }
+                    _ignoreClick = true;
                     break;
             }
         }
 
         #endregion
 
+        private Geometry GetGeometryOfDrawingPath()
+        {
+            var geometryString = $"M{_pathStart.Position.X},{_pathStart.Position.Y} ";
+            var p = _pathPoints.Select(x => $"L{x.X},{x.Y}");
+            geometryString += string.Join(" ", p);
+            return Geometry.Parse(geometryString);
+        }
 #region ViewModelsChanged
         private void PumpViewModelChanged(object sender, PropertyChangedEventArgs e)
         {
