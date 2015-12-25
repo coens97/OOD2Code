@@ -259,13 +259,24 @@ namespace FlowSystem.Presentation
         {
             // The model of the data can be changed here, but since business logic isn't allowed here it is put in the model
             var viewmodel = sender as PumpViewModel;
-            _flowModel.PumpPropertyChanged(
-                _selectedComponent.Component as PumpEntity, e, 
-                new PumpEntity
-                {
-                    MaximumFlow = viewmodel.MaximumFlow,
-                    CurrentFlow = viewmodel.CurrentFlow
-                });
+            var pump = _selectedComponent.Component as PumpEntity;
+            
+            try
+            {
+                _flowModel.PumpPropertyChanged(
+                    pump, e,
+                    new PumpEntity
+                    {
+                        MaximumFlow = viewmodel.MaximumFlow,
+                        CurrentFlow = viewmodel.CurrentFlow
+                    });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                viewmodel.MaximumFlow = pump.MaximumFlow;
+                viewmodel.CurrentFlow = pump.CurrentFlow;
+            }
         }
 
         private void SplitterViewModelChanged(object sender, PropertyChangedEventArgs e)

@@ -33,21 +33,21 @@
                         <DataTemplate DataType="{x:Type my:PipeViewModel}">
                             <StackPanel>
                                 <TextBlock Text="Maximum flow:" />
-                                <TextBox Text="{Binding MaximumFlow}" />
+                                <TextBox Text="{Binding MaximumFlow , UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type my:PumpViewModel}">
                             <StackPanel>
                                 <TextBlock Text="Maximum flow:" />
-                                <TextBox Text="{Binding MaximumFlow}" />
+                                <TextBox Text="{Binding MaximumFlow , UpdateSourceTrigger=PropertyChanged}" />
                                 <TextBlock Text="Current flow:" />
-                                <TextBox Text="{Binding CurrentFlow}" />
+                                <TextBox Text="{Binding CurrentFlow, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type my:SplitterViewModel}">
                             <StackPanel>
                                 <TextBlock Text="Devision:" />
-                                <TextBlock Text="{Binding Devision}" />
+                                <TextBlock Text="{Binding Devision, UpdateSourceTrigger=PropertyChanged}" />
                             </StackPanel>
                         </DataTemplate>
                     </ContentControl.Resources>
