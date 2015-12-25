@@ -65,6 +65,9 @@ namespace FlowSystem.Business
             if (start == null || end == null)
                 throw new ArgumentException("Start component or end component not given");
 
+            if (start == end)
+                throw new ArgumentException("Can't connect the component to itself");
+
             if (startIndex < 0 || startIndex >= start.FlowOutput.Length
                 || endIndex < 0 || endIndex >= end.FlowInput.Length)
                 throw new ArgumentException("Unable to connect pipe to component, index is out of range");
@@ -73,7 +76,7 @@ namespace FlowSystem.Business
             if (FlowNetwork.Pipes.Any(x =>
                 (x.StartComponent == start && x.StartComponentIndex == startIndex) ||
                 (x.EndComponent == end && x.EndComponentIndex == endIndex)))
-                throw new Exception("Can't connect a pipe to the same component twice.");
+                throw new Exception("Can't connect a pipe to the component since the input or output is already in use");
 
             var pipe = new PipeEntity
             {

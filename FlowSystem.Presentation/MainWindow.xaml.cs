@@ -38,6 +38,8 @@ namespace FlowSystem.Presentation
         private Path _currentPath;
         private bool _ignoreClick = false;
 
+        private Dictionary<PipeEntity, Path> _pipePaths = new Dictionary<PipeEntity, Path>();  
+
         public MainWindow(IFlowModel flowModel)
         {
             Icon = ImageAwesome.CreateImageSource(FontAwesomeIcon.Paw, Brushes.Black);
@@ -60,6 +62,12 @@ namespace FlowSystem.Presentation
             {
                 button.Background = _buttonColor;
             }
+
+            _pathStart = null;
+            _pathPoints = null;
+            if (_currentPath != null)
+                CanvasFlow.Children.Remove(_currentPath);
+            _currentPath = null;
         }
 
         private bool CheckChangesAndAsk()
@@ -281,32 +289,65 @@ namespace FlowSystem.Presentation
         {
             var component = sender as ComponentControl;
             if (component == null)
-                throw new Exception("Something went wrong, pleasee try again.");
-            // Components are only selectable when in mouse mode
-            switch (_mode)
+                throw new Exception("Something went wrong, please try again.");
+
+            try
             {
-                case Mode.Mouse:
-                    SetSelectedComponent(component);
-                    break;
-                case Mode.Draw:
-                    if (_pathStart == null)
-                    {
-                        var start = component.Component as IFlowOutput;
-                        if (start == null)
+                // Components are only selectable when in mouse mode
+                switch (_mode)
+                {
+                    case Mode.Mouse:
+                        SetSelectedComponent(component);
+                        break;
+                    case Mode.Draw:
+                        _ignoreClick = true;
+                        if (_pathStart == null)
                         {
-                            MessageBox.Show("Please select a component with an output");
+                            var start = component.Component as IFlowOutput;
+                            if (start == null)
+                            {
+                                MessageBox.Show("Please select a component with an output");
+                            }
+                            else
+                            {
+                                SetSelectedComponent(component);
+                                _pathStart = start;
+                            }
                         }
                         else
                         {
-                            _pathStart = start;
+                            var end = component.Component as IFlowInput;
+                            if (end == null)
+                            {
+                                MessageBox.Show("Please select a component with input");
+                            }
+                            else
+                            {
+                                var point = new PointEntity
+                                {
+                                    X = end.Position.X,
+                                    Y = end.Position.Y + 16
+                                };
+
+                                _pathPoints.Add(point);
+                                _currentPath.Data = GetGeometryOfDrawingPath();
+
+                                var pipe =_flowModel.AddPipe(_pathStart, end, _pathPoints, 0, 0);
+                                _pipePaths[pipe] = _currentPath;
+
+                                _pathStart = null;
+                                _pathPoints = null;
+                                // CanvasFlow.Children.Remove(_currentPath);
+                                _currentPath = null;
+                                ResetMode();
+                            }
                         }
-                    }
-                    else
-                    {
-                        MessageBox.Show("Please select empty grid");
-                    }
-                    _ignoreClick = true;
-                    break;
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
