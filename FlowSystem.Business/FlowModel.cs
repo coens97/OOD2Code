@@ -146,18 +146,19 @@ namespace FlowSystem.Business
 #endregion
 
 #region Delete
-        public void DeleteComponent(IComponentEntity component)
+        public List<PipeEntity> DeleteComponent(IComponentEntity component)
         {
             // get all pipes connected to component
             var pipes = FlowNetwork.Pipes.Where(x =>
                 x.StartComponent == component ||
-                x.EndComponent == component);
+                x.EndComponent == component).ToList();
             
             // delete those pipes
-            pipes.ToList().ForEach(x =>
+            pipes.ForEach(x =>
                 FlowNetwork.Pipes.Remove(x));
 
             FlowNetwork.Components.Remove(component);
+            return pipes;
         }
 
         public void DeletePipe(PipeEntity pipe)

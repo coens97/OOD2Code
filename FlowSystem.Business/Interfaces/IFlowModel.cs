@@ -16,7 +16,7 @@ namespace FlowSystem.Business.Interfaces
         PumpEntity AddPump(PointEntity point);
         SinkEntity AddSink(PointEntity point);
         SplitterEntity AddSplitter(PointEntity point);
-        void DeleteComponent(IComponentEntity component);
+        List<PipeEntity> DeleteComponent(IComponentEntity component);
         void DeletePipe(PipeEntity pipe);
         IComponentEntity DuplicateComponent(IComponentEntity component, PointEntity point);
         void MoveComponent(IComponentEntity component, PointEntity point);

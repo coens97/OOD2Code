@@ -488,8 +488,14 @@ namespace FlowSystem.Presentation
                         }
                         break;
                     case Mode.Delete:
-                        _flowModel.DeleteComponent(component.Component);
+                        var pipes = _flowModel.DeleteComponent(component.Component);
                         CanvasFlow.Children.Remove(component);
+                        pipes.ForEach(x =>
+                        {
+                            var path = _pipePaths.First(z => z.Value.Equals(x)).Key;
+                            CanvasFlow.Children.Remove(path);
+                            _pipePaths.Remove(path);
+                        });
                         ResetMode();
                         break;
                     case Mode.Clone:  
