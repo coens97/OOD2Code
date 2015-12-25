@@ -148,6 +148,19 @@ namespace FlowSystem.Presentation
 
             _changes = false;
         }
+        private void BtnNewFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void BtnClone_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
 
         private void Save(bool overwrite)
         {
