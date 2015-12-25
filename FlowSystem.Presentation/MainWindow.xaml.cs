@@ -24,8 +24,10 @@ namespace FlowSystem.Presentation
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static readonly Brush _buttonColor = Brushes.LightGray;
-        private static readonly Brush _buttonActiveColor = Brushes.White;
+        private static readonly Brush ButtonColor = Brushes.LightGray;
+        private static readonly Brush ButtonActiveColor = Brushes.White;
+        private static readonly int ComponentHeight = 32;
+        private static readonly int ComponentWidth = 32;
 
         private IFlowModel _flowModel;
 
@@ -34,6 +36,7 @@ namespace FlowSystem.Presentation
         private ComponentControl _selectedComponent;
 
         private IFlowOutput _pathStart;
+        private int _startIndex;
         private List<PointEntity> _pathPoints;
         private Path _currentPath;
         private bool _ignoreClick = false;
@@ -52,7 +55,7 @@ namespace FlowSystem.Presentation
         {
             ResetButtons();
             _mode = Mode.Mouse;
-            BtnMouse.Background = _buttonActiveColor;
+            BtnMouse.Background = ButtonActiveColor;
         }
 
         private void ResetButtons()
@@ -60,7 +63,7 @@ namespace FlowSystem.Presentation
             var buttons = new [] {BtnMouse, BtnDraw, BtnMerger, BtnPump, BtnSink, BtnSplitter};
             foreach (var button in buttons)
             {
-                button.Background = _buttonColor;
+                button.Background = ButtonColor;
             }
 
             _pathStart = null;
@@ -84,14 +87,14 @@ namespace FlowSystem.Presentation
         {
             ResetButtons();
             _mode = Mode.Mouse;
-            BtnMouse.Background = _buttonActiveColor;
+            BtnMouse.Background = ButtonActiveColor;
         }
 
         private void BtnDraw_Click(object sender, RoutedEventArgs e)
         {
             ResetButtons();
             _mode = Mode.Draw;
-            BtnDraw.Background = _buttonActiveColor;
+            BtnDraw.Background = ButtonActiveColor;
 
             _pathStart = null;
             _pathPoints = new List<PointEntity>();
@@ -101,28 +104,28 @@ namespace FlowSystem.Presentation
         {
             ResetButtons();
             _mode = Mode.Merger;
-            BtnMerger.Background = _buttonActiveColor;
+            BtnMerger.Background = ButtonActiveColor;
         }
 
         private void BtnPump_Click(object sender, RoutedEventArgs e)
         {
             ResetButtons();
             _mode = Mode.Pump;
-            BtnPump.Background = _buttonActiveColor;
+            BtnPump.Background = ButtonActiveColor;
         }
 
         private void BtnSink_Click(object sender, RoutedEventArgs e)
         {
             ResetButtons();
             _mode = Mode.Sink;
-            BtnSink.Background = _buttonActiveColor;
+            BtnSink.Background = ButtonActiveColor;
         }
 
         private void BtnSplitter_Click(object sender, RoutedEventArgs e)
         {
             ResetButtons();
             _mode = Mode.Splitter;
-            BtnSplitter.Background = _buttonActiveColor;
+            BtnSplitter.Background = ButtonActiveColor;
         }
 
         private void BtnOpenFile_Click(object sender, RoutedEventArgs e)
@@ -222,6 +225,13 @@ namespace FlowSystem.Presentation
             SetSelectedComponent(componentControl);
             _changes = true;
         }
+
+        private int GetMouseInputOutputIndex(PointEntity mouse, int nrOfIndex)
+        {
+            if (nrOfIndex == 1)
+                return 0;
+            return (int)(mouse.Y / (ComponentHeight/nrOfIndex));
+        }
 #region CanvasMousdownEvents
         private void Canvas_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -291,6 +301,13 @@ namespace FlowSystem.Presentation
             if (component == null)
                 throw new Exception("Something went wrong, please try again.");
 
+            var p = e.GetPosition(component);
+            var mouse = new PointEntity
+            {
+                X = p.X,
+                Y = p.Y
+            };
+
             try
             {
                 // Components are only selectable when in mouse mode
@@ -312,6 +329,7 @@ namespace FlowSystem.Presentation
                             {
                                 SetSelectedComponent(component);
                                 _pathStart = start;
+                                _startIndex = GetMouseInputOutputIndex(mouse, start.FlowOutput.Length);
                             }
                         }
                         else
@@ -332,7 +350,8 @@ namespace FlowSystem.Presentation
                                 _pathPoints.Add(point);
                                 _currentPath.Data = GetGeometryOfDrawingPath();
 
-                                var pipe =_flowModel.AddPipe(_pathStart, end, _pathPoints, 0, 0);
+                                var endIndex = GetMouseInputOutputIndex(mouse, end.FlowInput.Length);
+                                var pipe =_flowModel.AddPipe(_pathStart, end, _pathPoints, _startIndex, endIndex);
                                 _pipePaths[pipe] = _currentPath;
 
                                 _pathStart = null;
