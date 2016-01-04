@@ -26,9 +26,9 @@ namespace FlowSystem.Presentation
     {
         private static readonly Brush ButtonColor = Brushes.LightGray;
         private static readonly Brush ButtonActiveColor = Brushes.White;
-        private static readonly Brush PipeColor = Brushes.Black;
-        private static readonly Brush PipeWarningColor = Brushes.Red;
-        private static readonly Brush PipeSelected = Brushes.DarkGray;
+        private static readonly Brush ComponentColor = Brushes.Black;
+        private static readonly Brush WarningColor = Brushes.Red;
+        private static readonly Brush SelectedColor = Brushes.DeepSkyBlue;
 
         private static readonly int ComponentHeight = 32;
         private static readonly int ComponentWidth = 32;
@@ -43,13 +43,13 @@ namespace FlowSystem.Presentation
         private IFlowOutput _pathStart;
         private int _startIndex;
         private List<PointEntity> _pathPoints;
-        private Path _currentPath;
+        private Tuple<Path, TextBlock> _currentPath;
         private bool _ignoreClick = false;
         private string _path = string.Empty;
         private IComponentEntity _clone;
 
-        private Dictionary<Path, PipeEntity> _pipePaths = new Dictionary<Path, PipeEntity>();
-        private Dictionary<Path, PipeEntity> _overloadedPipes = new Dictionary<Path, PipeEntity>();
+        private Dictionary<Tuple<Path, TextBlock>, PipeEntity> _pipePaths = new Dictionary<Tuple<Path, TextBlock>, PipeEntity>(); // These could be done nicer
+        private Dictionary<Tuple<Path, TextBlock>, PipeEntity> _overloadedPipes = new Dictionary<Tuple<Path, TextBlock>, PipeEntity>();
         public MainWindow(IFlowModel flowModel)
         {
             Icon = ImageAwesome.CreateImageSource(FontAwesomeIcon.Paw, Brushes.Black);
@@ -78,7 +78,10 @@ namespace FlowSystem.Presentation
             _pathStart = null;
             _pathPoints = null;
             if (_currentPath != null)
-                CanvasFlow.Children.Remove(_currentPath);
+            {
+                CanvasFlow.Children.Remove(_currentPath.Item1);
+                CanvasFlow.Children.Remove(_currentPath.Item2);
+            }
             _currentPath = null;
         }
 
@@ -176,8 +179,8 @@ namespace FlowSystem.Presentation
                 Pipes = new List<PipeEntity>()
             }; ;
             ResetMode();
-            _pipePaths = new Dictionary<Path, PipeEntity>();
-            _overloadedPipes = new Dictionary<Path, PipeEntity>();
+            _pipePaths = new Dictionary<Tuple<Path, TextBlock>, PipeEntity >();
+            _overloadedPipes = new Dictionary<Tuple<Path, TextBlock>, PipeEntity>();
             _changes = false;
             CanvasFlow.Children.Clear();
         }
@@ -236,14 +239,8 @@ namespace FlowSystem.Presentation
         private void SetSelectedComponent(ComponentControl component)
         {
             ResetSelected();
-
-            var style = new Style
-            {
-                TargetType = typeof(ComponentControl)
-            };
-
-            style.Setters.Add(new Setter(OpacityProperty, 0.4)); // So lazy
-            component.Style = style;
+        
+            component.Foreground = SelectedColor;
 
             _selectedComponent = component;
 
@@ -326,23 +323,33 @@ namespace FlowSystem.Presentation
             }
             else
             {
-                _currentPath.Data = GetGeometryOfDrawingPath(_pathPoints);
+                _currentPath.Item1.Data = GetGeometryOfDrawingPath(_pathPoints);
             }
         }
 
-        private Path CreatePath(List<PointEntity> points)
+        private Tuple<Path, TextBlock> CreatePath(List<PointEntity> points)
         {
             var path = new Path
             {
-                Stroke = PipeColor,
+                Stroke = ComponentColor,
                 StrokeThickness = 6,
                 Data = GetGeometryOfDrawingPath(points)
             };
 
+            var textBlock = new TextBlock
+            {
+                Text = "0",
+                Foreground = ComponentColor
+            };
+            Canvas.SetLeft(textBlock, points.Sum(x => x.X) / points.Count);
+            Canvas.SetTop(textBlock, points.Sum(x => x.Y) / points.Count);
+            
             path.MouseDown += Pipe_MouseDown;
 
             CanvasFlow.Children.Add(path);
-            return path;
+            CanvasFlow.Children.Add(textBlock);
+
+            return new Tuple<Path, TextBlock>(path, textBlock);
         }
 
         #region CanvasMousdownEvents
@@ -407,13 +414,13 @@ namespace FlowSystem.Presentation
         {
             if (_selectedComponent != null)
             {
-                _selectedComponent.Style = null;
+                _selectedComponent.Foreground = ComponentColor;
                 _selectedComponent = null;
             }
 
             if (_selectedPath != null)
             {
-                _selectedPath.Stroke = _overloadedPipes.ContainsKey(_selectedPath) ? PipeWarningColor : PipeColor;
+                _selectedPath.Stroke = _overloadedPipes.Any(x => Equals(x.Key.Item1, _selectedPath)) ? WarningColor : ComponentColor;
                 _selectedPath = null;
             }
             PropertiesSidebar.Content = null;
@@ -498,7 +505,8 @@ namespace FlowSystem.Presentation
                         deletedPipes.ForEach(x =>
                         {
                             var path = _pipePaths.First(z => z.Value.Equals(x)).Key;
-                            CanvasFlow.Children.Remove(path);
+                            CanvasFlow.Children.Remove(path.Item1);
+                            CanvasFlow.Children.Remove(path.Item2);
                             _pipePaths.Remove(path);
                         });
                         ResetMode();
@@ -525,7 +533,7 @@ namespace FlowSystem.Presentation
             var path = sender as Path;
             if (path == null)
                 throw new Exception("Event is added to wrong component");
-            var pipe = _pipePaths[path];
+            var pipe = _pipePaths.First(x => Equals(x.Key.Item1, path)).Value;
 
             switch (_mode)
             {
@@ -533,7 +541,7 @@ namespace FlowSystem.Presentation
                 {
                     ResetSelected();
 
-                    path.Stroke = PipeSelected;
+                    path.Stroke = SelectedColor;
                     _selectedPath = path;
 
                     var pipeViewModel = new PipeViewModel
@@ -548,8 +556,10 @@ namespace FlowSystem.Presentation
                     break;
                 case Mode.Delete:
                     _flowModel.DeletePipe(pipe);
-                    CanvasFlow.Children.Remove(path);
-                    _pipePaths.Remove(path);
+                    var tuple = _pipePaths.First(x => Equals(x.Key.Item1, path)).Key;
+                    CanvasFlow.Children.Remove(tuple.Item1);
+                    CanvasFlow.Children.Remove(tuple.Item2);
+                    _pipePaths.Remove(tuple);
                     break;
             }
         }
@@ -624,7 +634,7 @@ namespace FlowSystem.Presentation
             try
             {
                 _flowModel.PipePropertyChanged(
-                    _pipePaths[_selectedPath], e,
+                    _pipePaths.First(x => Equals(x.Key.Item1, _selectedPath)).Value, e,
                     new PipeEntity
                     {
                         MaximumFlow = viewmodel.MaximumFlow
@@ -643,7 +653,8 @@ namespace FlowSystem.Presentation
             // Reset all pipe colors
             foreach (var keyValuePair in _pipePaths)
             {
-                keyValuePair.Key.Stroke = PipeColor;
+                keyValuePair.Key.Item1.Stroke = ComponentColor;
+                keyValuePair.Key.Item2.Foreground = ComponentColor;
             }
 
             _overloadedPipes = _pipePaths.Where(x =>
@@ -652,7 +663,8 @@ namespace FlowSystem.Presentation
 
             foreach (var keyValuePair in _overloadedPipes)
             {
-                keyValuePair.Key.Stroke = PipeWarningColor;
+                keyValuePair.Key.Item1.Stroke = WarningColor;
+                keyValuePair.Key.Item2.Foreground = WarningColor;
             }
         }
     }
