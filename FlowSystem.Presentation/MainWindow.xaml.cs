@@ -362,7 +362,7 @@ namespace FlowSystem.Presentation
                 {
                     case Mode.Mouse:
                     case Mode.Delete:
-                        break;
+                        break; // The code for selecting and deleting components is in the Component_MouseDown method.
                     case Mode.Merger:
                         AddComponentToScreen(_flowModel.AddMerger(point));
                         break;
@@ -488,9 +488,14 @@ namespace FlowSystem.Presentation
                         }
                         break;
                     case Mode.Delete:
-                        var pipes = _flowModel.DeleteComponent(component.Component);
+                        if (MessageBox.Show(
+                            "By deleting this component the connected pipes will also be deleted." +
+                            "Are you sure you want to delete this component?",
+                            "Flow system",
+                            MessageBoxButton.YesNo) == MessageBoxResult.No) return;
+                        var deletedPipes = _flowModel.DeleteComponent(component.Component);
                         CanvasFlow.Children.Remove(component);
-                        pipes.ForEach(x =>
+                        deletedPipes.ForEach(x =>
                         {
                             var path = _pipePaths.First(z => z.Value.Equals(x)).Key;
                             CanvasFlow.Children.Remove(path);
@@ -556,15 +561,9 @@ namespace FlowSystem.Presentation
             var first = true;
             var p = pipe.Select(x =>
             {
-                if (first)
-                {
-                    first = false;
-                    return $"M{x.X},{x.Y}";
-                }
-                else
-                {
-                    return $"L{x.X},{x.Y}";
-                }
+                if (!first) return $"L{x.X},{x.Y}";
+                first = false;
+                return $"M{x.X},{x.Y}";
             });
             return Geometry.Parse(string.Join(" ", p));
         }
