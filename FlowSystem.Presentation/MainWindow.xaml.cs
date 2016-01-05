@@ -178,7 +178,7 @@ namespace FlowSystem.Presentation
             {
                 Components = new List<IComponentEntity>(),
                 Pipes = new List<PipeEntity>()
-            }; ;
+            };
             ResetMode();
             _pipePaths = new Dictionary<Tuple<Path, TextBlock>, PipeEntity >();
             _overloadedPipes = new Dictionary<Tuple<Path, TextBlock>, PipeEntity>();
