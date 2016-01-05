@@ -556,7 +556,7 @@ namespace FlowSystem.Presentation
             var path = sender as Path;
             if (path == null)
                 throw new Exception("Event is added to wrong component");
-            if (Equals(path, _currentPath.Item1))
+            if (_currentPath != null && Equals(path, _currentPath.Item1))
                 return;
             var pipe = _pipePaths.First(x => Equals(x.Key.Item1, path)).Value;
 
