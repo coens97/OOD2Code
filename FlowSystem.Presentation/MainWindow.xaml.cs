@@ -339,10 +339,25 @@ namespace FlowSystem.Presentation
             var textBlock = new TextBlock
             {
                 Text = "0",
-                Foreground = ComponentColor
+                Foreground = ComponentColor,
+                FontSize = 20
             };
-            Canvas.SetLeft(textBlock, points.Sum(x => x.X) / points.Count);
-            Canvas.SetTop(textBlock, points.Sum(x => x.Y) / points.Count);
+            
+            // Calculate the textblock position
+            // Would be nice to describe in Design document, but code is written really quickly
+            // But hope you can get the gist of it since LINQ is very readable
+            var middleX = (points.First().X + points.Last().X)/2;
+            //  Get the line at the middle of the path
+            var left = points.Where(x => x.X <= middleX).Aggregate((i1, i2) => i1.X >= i2.X ? i1 : i2);
+            var right = points.Where(x => x.X > middleX).Aggregate((i1, i2) => i1.X < i2.X ? i1 : i2);
+
+            var angle = Math.Atan2(right.Y - left.Y, right.X - left.X);
+            var yPos = left.Y + Math.Tan(angle)*(middleX - left.X);
+
+            yPos += (angle > 0) ? -30 : 4; 
+
+            Canvas.SetLeft(textBlock, middleX);
+            Canvas.SetTop(textBlock, yPos);
             
             path.MouseDown += Pipe_MouseDown;
 
