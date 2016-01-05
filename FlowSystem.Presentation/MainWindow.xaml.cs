@@ -13,6 +13,7 @@ using FlowSystem.Presentation.ViewModel;
 using FontAwesome.WPF;
 using Microsoft.Win32;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Shapes;
 using FlowSystem.Common.Interfaces;
@@ -182,6 +183,7 @@ namespace FlowSystem.Presentation
             _pipePaths = new Dictionary<Tuple<Path, TextBlock>, PipeEntity >();
             _overloadedPipes = new Dictionary<Tuple<Path, TextBlock>, PipeEntity>();
             _changes = false;
+            _path = string.Empty;
             CanvasFlow.Children.Clear();
         }
         private void BtnNewFile_Click(object sender, RoutedEventArgs e)
@@ -324,7 +326,27 @@ namespace FlowSystem.Presentation
             else
             {
                 _currentPath.Item1.Data = GetGeometryOfDrawingPath(_pathPoints);
+                MoveTextBox(_pathPoints, _currentPath.Item2);
             }
+        }
+
+        private void MoveTextBox(List<PointEntity> points, TextBlock textBlock)
+        {
+            // Calculate the textblock position
+            // Would be nice to describe in Design document, but code is written really quickly
+            // But hope you can get the gist of it since LINQ is very readable
+            var middleX = (points.First().X + points.Last().X) / 2;
+            //  Get the line at the middle of the path
+            var left = points.Where(x => x.X <= middleX).Aggregate((i1, i2) => i1.X >= i2.X ? i1 : i2);
+            var right = points.Where(x => x.X > middleX).Aggregate((i1, i2) => i1.X < i2.X ? i1 : i2);
+
+            var angle = Math.Atan2(right.Y - left.Y, right.X - left.X);
+            var yPos = left.Y + Math.Tan(angle) * (middleX - left.X);
+
+            yPos += (angle > 0) ? -30 : 4;
+
+            Canvas.SetLeft(textBlock, middleX);
+            Canvas.SetTop(textBlock, yPos);
         }
 
         private Tuple<Path, TextBlock> CreatePath(List<PointEntity> points)
@@ -342,23 +364,9 @@ namespace FlowSystem.Presentation
                 Foreground = ComponentColor,
                 FontSize = 20
             };
-            
-            // Calculate the textblock position
-            // Would be nice to describe in Design document, but code is written really quickly
-            // But hope you can get the gist of it since LINQ is very readable
-            var middleX = (points.First().X + points.Last().X)/2;
-            //  Get the line at the middle of the path
-            var left = points.Where(x => x.X <= middleX).Aggregate((i1, i2) => i1.X >= i2.X ? i1 : i2);
-            var right = points.Where(x => x.X > middleX).Aggregate((i1, i2) => i1.X < i2.X ? i1 : i2);
 
-            var angle = Math.Atan2(right.Y - left.Y, right.X - left.X);
-            var yPos = left.Y + Math.Tan(angle)*(middleX - left.X);
+            MoveTextBox(points, textBlock);
 
-            yPos += (angle > 0) ? -30 : 4; 
-
-            Canvas.SetLeft(textBlock, middleX);
-            Canvas.SetTop(textBlock, yPos);
-            
             path.MouseDown += Pipe_MouseDown;
 
             CanvasFlow.Children.Add(path);
@@ -548,6 +556,8 @@ namespace FlowSystem.Presentation
             var path = sender as Path;
             if (path == null)
                 throw new Exception("Event is added to wrong component");
+            if (Equals(path, _currentPath.Item1))
+                return;
             var pipe = _pipePaths.First(x => Equals(x.Key.Item1, path)).Value;
 
             switch (_mode)
@@ -670,6 +680,7 @@ namespace FlowSystem.Presentation
             {
                 keyValuePair.Key.Item1.Stroke = ComponentColor;
                 keyValuePair.Key.Item2.Foreground = ComponentColor;
+                keyValuePair.Key.Item2.Text = keyValuePair.Value.CurrentFlow.ToString(CultureInfo.InvariantCulture);
             }
 
             _overloadedPipes = _pipePaths.Where(x =>
